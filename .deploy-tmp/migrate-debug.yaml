@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cw-migrate-debug
+  namespace: clusterwatch
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "acrcwb1rqcvlk.azurecr.io/clusterwatch-backend:0.1.0"
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: clusterwatch-config
+            - secretRef:
+                name: clusterwatch-secrets

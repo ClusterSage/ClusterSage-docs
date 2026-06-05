@@ -1,0 +1,31 @@
+﻿{
+    "resourceGroup":  "rg-clusterwatch-test-b1rqcvlk",
+    "subscriptionId":  "de6d42ab-61dd-4743-a7de-166cd3281198",
+    "acrName":  "acrcwb1rqcvlk",
+    "aksName":  "aks-cw-b1rqcvlk",
+    "postgresServer":  "pg-cw-b1rqcvlk",
+    "postgresLocation":  "centralindia",
+    "storageAccount":  "stcwb1rqcvlk",
+    "frontendUrl":  "http://20.242.196.31",
+    "backendUrl":  "http://20.81.124.81",
+    "backendHealth":  {
+                          "status":  "ok",
+                          "service":  "ClusterWatch"
+                      },
+    "dashboardStatus":  200,
+    "smokeUser":  "demo-20260605005142@example.com",
+    "curlSmokeClusterId":  "ba762be6-fc8e-4570-92c2-5fe13ad147e2",
+    "installedAgentClusterId":  "9bed7667-5ede-45e1-8b00-7650998e278f",
+    "installedAgentStatus":  "healthy",
+    "installedAgentLogBatchCount":  6,
+    "installedAgentIssueCount":  15,
+    "blobCount":  19,
+    "images":  [
+                   "acrcwb1rqcvlk.azurecr.io/clusterwatch-backend:0.1.2",
+                   "acrcwb1rqcvlk.azurecr.io/clusterwatch-frontend:0.1.0",
+                   "acrcwb1rqcvlk.azurecr.io/clusterwatch-agent:0.1.1"
+               ],
+    "cleanupCommands":  [
+                            "az group delete --name rg-clusterwatch-test-b1rqcvlk --yes --no-wait"
+                        ]
+}

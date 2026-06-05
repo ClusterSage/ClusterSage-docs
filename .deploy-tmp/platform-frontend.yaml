@@ -1,0 +1,38 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterwatch-frontend
+  namespace: clusterwatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clusterwatch-frontend
+  template:
+    metadata:
+      labels:
+        app: clusterwatch-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "acrcwb1rqcvlk.azurecr.io/clusterwatch-frontend:0.1.0"
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://20.81.124.81"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clusterwatch-frontend
+  namespace: clusterwatch
+spec:
+  type: LoadBalancer
+  selector:
+    app: clusterwatch-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

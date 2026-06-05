@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: clusterwatch
+      POSTGRES_PASSWORD: clusterwatch
+      POSTGRES_DB: clusterwatch
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clusterwatch -d clusterwatch"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.33.0
+    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0
+    ports:
+      - "10000:10000"
+    volumes:
+      - azurite-data:/data
+  backend:
+    build: ./apps/backend
+    env_file: .env.example
+    environment:
+      DATABASE_URL: postgresql+asyncpg://clusterwatch:clusterwatch@postgres:5432/clusterwatch
+      AZURE_STORAGE_CONNECTION_STRING: UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      azurite:
+        condition: service_started
+  frontend:
+    build: ./apps/frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_APP_NAME: ClusterWatch
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+volumes:
+  postgres-data:
+  azurite-data:

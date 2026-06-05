@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterwatch-collector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: clusterwatch-agent
+    app.kubernetes.io/component: collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: clusterwatch-agent
+      app.kubernetes.io/component: collector
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: clusterwatch-agent
+        app.kubernetes.io/component: collector
+    spec:
+      serviceAccountName: clusterwatch-agent
+      containers:
+        - name: collector
+          image: "{{ .Values.agent.image.repository }}:{{ .Values.agent.image.tag }}"
+          imagePullPolicy: {{ .Values.agent.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: CLUSTERWATCH_BACKEND_URL
+              value: {{ .Values.backend.url | quote }}
+            - name: CLUSTERWATCH_CLUSTER_NAME
+              value: {{ .Values.cluster.name | quote }}
+            - name: CLUSTERWATCH_CLUSTER_PROVIDER
+              value: {{ .Values.cluster.provider | quote }}
+            - name: CLUSTERWATCH_AGENT_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            - name: CLUSTERWATCH_HEARTBEAT_INTERVAL_SECONDS
+              value: {{ .Values.agent.heartbeatIntervalSeconds | quote }}
+            - name: CLUSTERWATCH_SNAPSHOT_INTERVAL_SECONDS
+              value: {{ .Values.agent.snapshotIntervalSeconds | quote }}
+            - name: CLUSTERWATCH_LOG_LEVEL
+              value: {{ .Values.agent.logLevel | quote }}
+          envFrom:
+            - secretRef:
+                name: clusterwatch-agent-auth
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+{{ toYaml .Values.resources.collector | indent 12 }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}

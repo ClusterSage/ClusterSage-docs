@@ -1,0 +1,1 @@
+{"fileUris":["https://<storage-account>.blob.core.windows.net/scripts/custom-script.sh"],"commandToExecute":"bash custom-script.sh"}

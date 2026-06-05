@@ -1,0 +1,9 @@
+{
+  "exitCode": 0,
+  "finishedAt": "2026-06-04T18:54:21+00:00",
+  "id": "14cb42e7dfe049d7925a9891fa02fc44",
+  "logs": "namespace/clusterwatch created\nconfigmap/clusterwatch-config created\nsecret/clusterwatch-secrets created\njob.batch/clusterwatch-migrations created\ndeployment.apps/clusterwatch-backend created\nservice/clusterwatch-backend created\nerror: timed out waiting for the condition on jobs/clusterwatch-migrations\ndeployment \"clusterwatch-backend\" successfully rolled out\nNAME                           TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE   SELECTOR\nservice/clusterwatch-backend   LoadBalancer   10.0.117.234   20.81.124.81   80:32492/TCP   4m    app=clusterwatch-backend\n\nNAME                                        READY   STATUS    RESTARTS   AGE   IP            NODE                                NOMINATED NODE   READINESS GATES\npod/clusterwatch-backend-76dcf6d4b9-x9fl8   1/1     Running   0          4m    10.244.0.83   aks-nodepool1-19165073-vmss000000   <none>           <none>\n\nNAME                                STATUS   COMPLETIONS   DURATION   AGE   CONTAINERS   IMAGES                                                SELECTOR\njob.batch/clusterwatch-migrations   Failed   0/1           4m         4m    migrate      acrcwb1rqcvlk.azurecr.io/clusterwatch-backend:0.1.0   batch.kubernetes.io/controller-uid=6db78d44-4f62-4951-90b8-6ff90339066c\n",
+  "provisioningState": "Succeeded",
+  "reason": null,
+  "startedAt": "2026-06-04T18:50:20+00:00"
+}

@@ -1,0 +1,54 @@
+{{- if .Values.fluentbit.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: clusterwatch-fluent-bit
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: clusterwatch-agent
+    app.kubernetes.io/component: fluent-bit
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: clusterwatch-agent
+      app.kubernetes.io/component: fluent-bit
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: clusterwatch-agent
+        app.kubernetes.io/component: fluent-bit
+    spec:
+      serviceAccountName: clusterwatch-agent
+      containers:
+        - name: fluent-bit
+          image: "{{ .Values.fluentbit.image.repository }}:{{ .Values.fluentbit.image.tag }}"
+          imagePullPolicy: {{ .Values.fluentbit.image.pullPolicy }}
+          volumeMounts:
+            - name: config
+              mountPath: /fluent-bit/etc/
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+            - name: dockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: buffers
+              mountPath: /buffers
+          resources:
+{{ toYaml .Values.resources.fluentbit | indent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: clusterwatch-fluent-bit
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: dockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+            type: DirectoryOrCreate
+        - name: buffers
+          emptyDir: {}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+{{- end }}

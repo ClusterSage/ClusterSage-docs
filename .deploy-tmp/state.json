@@ -1,0 +1,15 @@
+﻿{
+    "subscriptionId":  "de6d42ab-61dd-4743-a7de-166cd3281198",
+    "location":  "eastus",
+    "resourceGroup":  "rg-clusterwatch-test-b1rqcvlk",
+    "acrName":  "acrcwb1rqcvlk",
+    "aksName":  "aks-cw-b1rqcvlk",
+    "postgresServer":  "pg-cw-b1rqcvlk",
+    "postgresAdmin":  "cwadmin",
+    "postgresDb":  "clusterwatch",
+    "storageAccount":  "stcwb1rqcvlk",
+    "createdAt":  "2026-06-04T23:55:41.5326234+05:30",
+    "postgresLocation":  "centralindia",
+    "backendUrl":  "http://20.81.124.81",
+    "frontendUrl":  "http://20.242.196.31"
+}

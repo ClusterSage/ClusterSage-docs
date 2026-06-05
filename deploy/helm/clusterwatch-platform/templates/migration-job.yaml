@@ -1,0 +1,18 @@
+{{- if .Values.migrations.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: clusterwatch-migrations-{{ .Release.Revision }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef: { name: clusterwatch-config }
+            - secretRef: { name: clusterwatch-secrets }
+{{- end }}

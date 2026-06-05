@@ -1,0 +1,9 @@
+﻿{
+  "exitCode": 0,
+  "finishedAt": "2026-06-04T19:19:20+00:00",
+  "id": "dd22150e331142f2841e1bc67f4ce674",
+  "logs": "deployment.apps/clusterwatch-frontend created\nservice/clusterwatch-frontend created\nWaiting for deployment \"clusterwatch-frontend\" rollout to finish: 0 of 1 updated replicas are available...\ndeployment \"clusterwatch-frontend\" successfully rolled out\nFRONTEND_IP=\nNAME                            TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE   SELECTOR\nservice/clusterwatch-backend    LoadBalancer   10.0.117.234   20.81.124.81   80:32492/TCP   28m   app=clusterwatch-backend\nservice/clusterwatch-frontend   LoadBalancer   10.0.131.87    <pending>      80:30909/TCP   11s   app=clusterwatch-frontend\n\nNAME                                         READY   STATUS      RESTARTS   AGE   IP             NODE                                NOMINATED NODE   READINESS GATES\npod/clusterwatch-backend-7bb65fbb6c-wzgxg    1/1     Running     0          14m   10.244.0.181   aks-nodepool1-19165073-vmss000000   <none>           <none>\npod/clusterwatch-frontend-59c569c885-fj6jd   1/1     Running     0          11s   10.244.0.23    aks-nodepool1-19165073-vmss000000   <none>           <none>\npod/clusterwatch-migrations-9c7p2            0/1     Completed   0          14m   10.244.0.242   aks-nodepool1-19165073-vmss000000   <none>           <none>\n",
+  "provisioningState": "Succeeded",
+  "reason": null,
+  "startedAt": "2026-06-04T19:19:09+00:00"
+}

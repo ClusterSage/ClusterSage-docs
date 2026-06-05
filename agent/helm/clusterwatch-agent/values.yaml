@@ -1,0 +1,44 @@
+backend:
+  url: ""
+auth:
+  email: ""
+  accessKey: ""
+cluster:
+  name: ""
+  provider: "aks"
+agent:
+  image:
+    repository: ""
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  logLevel: "info"
+  heartbeatIntervalSeconds: 30
+  snapshotIntervalSeconds: 60
+fluentbit:
+  enabled: true
+  image:
+    repository: "cr.fluentbit.io/fluent/fluent-bit"
+    tag: "3.2"
+    pullPolicy: IfNotPresent
+  excludeAgentNamespace: true
+rbac:
+  create: true
+resources:
+  collector:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  fluentbit:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+nodeSelector: {}
+tolerations:
+  - operator: Exists
+affinity: {}
