@@ -11,5 +11,7 @@
     "createdAt":  "2026-06-04T23:55:41.5326234+05:30",
     "postgresLocation":  "centralindia",
     "backendUrl":  "http://20.81.124.81",
-    "frontendUrl":  "http://20.242.196.31"
+    "frontendUrl":  "http://20.242.196.31",
+    "publicAgentAcrName":  "acrcwagentpubcwb1rqcvlk",
+    "publicAgentImage":  "acrcwagentpubcwb1rqcvlk.azurecr.io/clusterwatch-agent:0.1.1"
 }

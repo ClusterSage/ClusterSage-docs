@@ -27,5 +27,10 @@
                ],
     "cleanupCommands":  [
                             "az group delete --name rg-clusterwatch-test-b1rqcvlk --yes --no-wait"
-                        ]
+                        ],
+    "publicAgentImage":  "acrcwagentpubcwb1rqcvlk.azurecr.io/clusterwatch-agent:0.1.1",
+    "publicAgentAcrName":  "acrcwagentpubcwb1rqcvlk",
+    "publicPullProof":  "public-pull-ok\nacrcwagentpubcwb1rqcvlk.azurecr.io/clusterwatch-agent@sha256:9846979877335594ba08fe6ef2388f15232accab402d300c815dafe47daad3b8\n1\n",
+    "frontendPublicImageUiSynced":  true,
+    "frontendImage":  "acrcwb1rqcvlk.azurecr.io/clusterwatch-frontend:0.1.1"
 }

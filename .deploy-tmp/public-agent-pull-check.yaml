@@ -1,0 +1,20 @@
+﻿apiVersion: v1
+kind: Namespace
+metadata:
+  name: public-pull-check
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: public-agent-pull-check
+  namespace: public-pull-check
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: check
+          image: "acrcwagentpubcwb1rqcvlk.azurecr.io/clusterwatch-agent:0.1.1"
+          imagePullPolicy: Always
+          command: ["python", "-c", "print('public-pull-ok')"]
