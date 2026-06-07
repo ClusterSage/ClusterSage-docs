@@ -42,4 +42,8 @@ class BlobReader:
             raise ValueError("Invalid blob path")
         container = self.client.get_container_client(self.container_name)
         body = container.download_blob(blob_path).readall()
-        return json.loads(gzip.decompress(body).decode("utf-8"))
+        try:
+            raw = gzip.decompress(body)
+        except gzip.BadGzipFile:
+            raw = body
+        return json.loads(raw.decode("utf-8"))
