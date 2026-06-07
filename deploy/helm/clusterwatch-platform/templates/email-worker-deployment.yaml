@@ -1,0 +1,25 @@
+{{- if .Values.emailWorker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterwatch-email-worker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.emailWorker.replicaCount }}
+  selector:
+    matchLabels: { app: clusterwatch-email-worker }
+  template:
+    metadata:
+      labels: { app: clusterwatch-email-worker }
+    spec:
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      containers:
+        - name: email-worker
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["python", "-m", "app.workers.email_worker"]
+          envFrom:
+            - configMapRef: { name: clusterwatch-config }
+            - secretRef: { name: clusterwatch-secrets }
+{{- end }}

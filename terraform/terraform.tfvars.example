@@ -1,0 +1,18 @@
+project                 = "kubesage"
+environment             = "prod"
+location                = "eastus"
+domain_name             = "nexaflow.site"
+frontdoor_sku_name      = "Premium_AzureFrontDoor"
+origin_host_name        = "replace-with-ingress-or-load-balancer-hostname"
+origin_host_header      = "replace-with-ingress-or-load-balancer-hostname"
+acr_name                = "acrkubesageprod"
+aks_name                = "aks-kubesage-prod"
+aks_node_count          = 1
+aks_vm_size             = "Standard_D2s_v4"
+database_location       = "centralindia"
+postgres_server_name    = "pg-kubesage-prod-ci"
+postgres_admin_login    = "kubesageadmin"
+postgres_admin_password = "replace-with-strong-password"
+tags = {
+  Owner = "platform"
+}

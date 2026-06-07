@@ -20,11 +20,20 @@ backend:
     PUBLIC_API_URL: ""
     CORS_ALLOWED_ORIGINS: ""
     AZURE_STORAGE_CONTAINER: "clusterwatch-data"
+    AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE: ""
+    CLUSTER_CONNECTED_QUEUE_NAME: "cluster-connected"
+    AZURE_COMMUNICATION_EMAIL_ENDPOINT: ""
+    EMAIL_SENDER_ADDRESS: ""
   secrets:
     DATABASE_URL: ""
     JWT_SECRET: ""
     AGENT_TOKEN_SECRET: ""
     AZURE_STORAGE_CONNECTION_STRING: ""
+    AZURE_SERVICEBUS_CONNECTION_STRING: ""
+    AZURE_COMMUNICATION_EMAIL_CONNECTION_STRING: ""
+emailWorker:
+  enabled: true
+  replicaCount: 1
 ingress:
   enabled: true
   className: "nginx"

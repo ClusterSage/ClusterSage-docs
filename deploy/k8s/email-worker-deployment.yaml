@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterwatch-email-worker
+  namespace: clusterwatch
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: clusterwatch-email-worker } }
+  template:
+    metadata: { labels: { app: clusterwatch-email-worker } }
+    spec:
+      containers:
+        - name: email-worker
+          image: <acr>.azurecr.io/clusterwatch-backend:0.1.0
+          command: ["python", "-m", "app.workers.email_worker"]
+          envFrom:
+            - configMapRef: { name: clusterwatch-config }
+            - secretRef: { name: clusterwatch-secrets }

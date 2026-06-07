@@ -15,6 +15,13 @@ class Settings(BaseSettings):
     agent_token_expire_hours: int = 720
     azure_storage_connection_string: str = ""
     azure_storage_container: str = "clusterwatch-data"
+    azure_servicebus_connection_string: str = ""
+    azure_servicebus_fully_qualified_namespace: str = ""
+    cluster_connected_queue_name: str = "cluster-connected"
+    azure_communication_email_connection_string: str = ""
+    azure_communication_email_endpoint: str = ""
+    email_sender_address: str = ""
+    email_worker_poll_seconds: int = 10
     log_batch_max_size_mb: int = 10
     log_retention_days: int = 30
     cors_allowed_origins: str = "http://localhost:3000"

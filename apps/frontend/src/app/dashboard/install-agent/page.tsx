@@ -47,7 +47,7 @@ export default function InstallAgentPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Install ClusterWatch agent</h1>
+        <h1 className="text-3xl font-bold">Install KubeSage agent</h1>
         <p className="text-slate-600">
           Logged in as {user?.email || "loading..."}. The agent runs inside your cluster and pushes data outward.
         </p>

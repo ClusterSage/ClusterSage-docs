@@ -1,5 +1,10 @@
 "use client";
-import { use, useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import type { LogBatch } from "@/types/api";
-export default function LogsPage({ params }: { params: Promise<{ clusterId: string }> }) { const { clusterId } = use(params); const [logs,setLogs] = useState<LogBatch[]|null>(null); const [error,setError] = useState(""); useEffect(()=>{api<LogBatch[]>(`/api/clusters/${clusterId}/logs`).then(setLogs).catch(e=>setError(e.message));},[clusterId]); return <div className="space-y-5"><h1 className="text-3xl font-bold">Log batches</h1>{error && <div className="card border-red-200 text-red-700">{error}</div>}{logs === null && <div className="card">Loading log batches...</div>}{logs?.length === 0 && <div className="card">No log batches received yet.</div>}<div className="space-y-3">{logs?.map(b => <div className="card" key={b.id}><div className="flex justify-between gap-4"><div><p className="font-semibold">{b.log_count} log records</p><p className="break-all text-sm text-slate-600">{b.blob_path}</p></div><p className="text-sm text-slate-500">{new Date(b.created_at).toLocaleString()}</p></div></div>)}</div></div>; }
+import { use, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function LogsPage({ params }: { params: Promise<{ clusterId: string }> }) {
+  const { clusterId } = use(params);
+  const router = useRouter();
+  useEffect(() => { router.replace(`/dashboard/clusters/${clusterId}`); }, [clusterId, router]);
+  return <div className="card">Opening resource logs...</div>;
+}

@@ -1,3 +1,5 @@
+import asyncio
+import logging
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -6,10 +8,12 @@ from app.audit.service import write_audit
 from app.auth.dependencies import get_current_agent
 from app.auth.security import create_agent_token, verify_secret
 from app.db.session import get_session
-from app.models.entities import AgentKey, Cluster, User
+from app.models.entities import AgentKey, AuditLog, Cluster, User
+from app.notifications.events import build_cluster_connected_event, publish_cluster_connected_event
 from app.schemas.api import AgentRegisterRequest, AgentRegisterResponse, HeartbeatRequest
 
 router = APIRouter(prefix="/api/agent", tags=["agent"])
+log = logging.getLogger(__name__)
 
 @router.post("/register", response_model=AgentRegisterResponse)
 async def register_agent(payload: AgentRegisterRequest, session: AsyncSession = Depends(get_session)):
@@ -33,6 +37,28 @@ async def register_agent(payload: AgentRegisterRequest, session: AsyncSession = 
         cluster.status = "connected"
         cluster.last_seen_at = now
     await write_audit(session, "agent.registration", "agent", user.organization_id, cluster_id=cluster.id, details={"cluster_name": cluster.name, "key_last4": valid.key_last4})
+    notification_already_queued = (await session.execute(
+        select(AuditLog).where(
+            AuditLog.action == "notification.cluster_connected.queued",
+            AuditLog.cluster_id == cluster.id,
+            AuditLog.user_id == user.id,
+        ).limit(1)
+    )).scalars().first()
+    if not notification_already_queued:
+        event = build_cluster_connected_event(
+            organization_id=user.organization_id,
+            user_id=user.id,
+            recipient_email=user.email,
+            cluster_id=cluster.id,
+            cluster_name=cluster.name,
+        )
+        try:
+            queued = await asyncio.to_thread(publish_cluster_connected_event, event)
+            if queued:
+                await write_audit(session, "notification.cluster_connected.queued", "system", user.organization_id, user.id, cluster.id, {"event_id": event.event_id})
+        except Exception as exc:
+            log.warning("cluster connected email event publish failed for cluster_id=%s: %s", cluster.id, exc)
+            await write_audit(session, "notification.cluster_connected.queue_failed", "system", user.organization_id, user.id, cluster.id, {"reason": "publish_failed"})
     await session.commit()
     return AgentRegisterResponse(cluster_id=cluster.id, agent_token=create_agent_token(str(cluster.id), str(user.organization_id)))
 

@@ -29,3 +29,17 @@ class BlobWriter:
         body = gzip.compress(raw)
         container.upload_blob(blob_path, body, overwrite=False, content_settings=ContentSettings(content_type="application/json", content_encoding="gzip"))
         return blob_path, len(body)
+
+class BlobReader:
+    def __init__(self) -> None:
+        if not settings.azure_storage_connection_string:
+            raise RuntimeError("AZURE_STORAGE_CONNECTION_STRING is required")
+        self.client = BlobServiceClient.from_connection_string(settings.azure_storage_connection_string)
+        self.container_name = settings.azure_storage_container
+
+    def read_json_gz(self, blob_path: str) -> Any:
+        if ".." in blob_path or blob_path.startswith("/") or "\\" in blob_path:
+            raise ValueError("Invalid blob path")
+        container = self.client.get_container_client(self.container_name)
+        body = container.download_blob(blob_path).readall()
+        return json.loads(gzip.decompress(body).decode("utf-8"))
