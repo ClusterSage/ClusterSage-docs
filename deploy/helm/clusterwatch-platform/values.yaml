@@ -1,5 +1,7 @@
 global:
   imagePullSecrets: []
+namespace:
+  create: false
 frontend:
   image:
     repository: ""
@@ -51,5 +53,11 @@ ingress:
   tls:
     enabled: false
     secretName: ""
+gateway:
+  enabled: false
+  className: "kgateway"
+  namespace: "kgateway-system"
+  name: "kubesage-public"
+  hostname: ""
 migrations:
   enabled: true

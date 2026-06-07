@@ -1,4 +1,9 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
+export function getApiUrl() {
+  if (configuredApiUrl) return configuredApiUrl;
+  if (typeof window !== "undefined") return window.location.origin;
+  return process.env.NODE_ENV === "development" ? "http://localhost:8000" : "";
+}
 export type ApiError = { detail?: string };
 export function getToken() { if (typeof window === "undefined") return null; return localStorage.getItem("clusterwatch_token"); }
 export function setToken(token: string) { localStorage.setItem("clusterwatch_token", token); }
@@ -8,7 +13,7 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type") && options.body) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers, cache: "no-store" });
+  const res = await fetch(`${getApiUrl()}${path}`, { ...options, headers, cache: "no-store" });
   if (!res.ok) {
     let message = `Request failed (${res.status})`;
     try { const data = await res.json() as ApiError; message = data.detail || message; } catch {}
@@ -17,4 +22,4 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
-export const apiUrl = API_URL;
+export const apiUrl = configuredApiUrl;

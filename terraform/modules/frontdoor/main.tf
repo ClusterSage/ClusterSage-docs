@@ -26,7 +26,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "main" {
   health_probe {
     interval_in_seconds = 100
     path                = "/health"
-    protocol            = "Https"
+    protocol            = "Http"
     request_type        = "GET"
   }
 }
@@ -41,7 +41,7 @@ resource "azurerm_cdn_frontdoor_origin" "main" {
   https_port                     = 443
   priority                       = 1
   weight                         = 1000
-  certificate_name_check_enabled = true
+  certificate_name_check_enabled = false
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "main" {
@@ -62,7 +62,7 @@ resource "azurerm_cdn_frontdoor_route" "main" {
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.main.id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.main.id]
   enabled                       = true
-  forwarding_protocol           = "HttpsOnly"
+  forwarding_protocol           = "HttpOnly"
   https_redirect_enabled        = true
   patterns_to_match             = ["/*"]
   supported_protocols           = ["Http", "Https"]

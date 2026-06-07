@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { api, apiUrl } from "@/lib/api";
+import { api, getApiUrl } from "@/lib/api";
 import type { AgentKey, User } from "@/types/api";
 import { CodeBlock } from "@/components/CodeBlock";
 
@@ -35,11 +35,12 @@ export default function InstallAgentPage() {
   }
 
   const exactImage = `${imageRepo}:${imageTag}`;
+  const backendUrl = getApiUrl();
   const pullCommands = `docker pull ${publicAgentImage}\ncrictl pull ${publicAgentImage}\nkubectl run clusterwatch-agent-pull-check \\\n  --rm -it \\\n  --restart=Never \\\n  --image=${publicAgentImage} \\\n  --command -- python -c "print('public-pull-ok')"`;
 
   const values = useMemo(
-    () => `backend:\n  url: "${apiUrl}"\nauth:\n  email: "${user?.email || "you@example.com"}"\n  accessKey: "${accessKey || "cw_live_copy_generated_key_here"}"\ncluster:\n  name: "${clusterName}"\n  provider: "aks"\nagent:\n  image:\n    repository: "${imageRepo}"\n    tag: "${imageTag}"\n    pullPolicy: IfNotPresent\n  logLevel: "info"\n  heartbeatIntervalSeconds: 30\n  snapshotIntervalSeconds: 60\nfluentbit:\n  enabled: true\n  excludeAgentNamespace: true`,
-    [user, accessKey, clusterName, imageRepo, imageTag]
+    () => `backend:\n  url: "${backendUrl}"\nauth:\n  email: "${user?.email || "you@example.com"}"\n  accessKey: "${accessKey || "cw_live_copy_generated_key_here"}"\ncluster:\n  name: "${clusterName}"\n  provider: "aks"\nagent:\n  image:\n    repository: "${imageRepo}"\n    tag: "${imageTag}"\n    pullPolicy: IfNotPresent\n  logLevel: "info"\n  heartbeatIntervalSeconds: 30\n  snapshotIntervalSeconds: 60\nfluentbit:\n  enabled: true\n  excludeAgentNamespace: true`,
+    [backendUrl, user, accessKey, clusterName, imageRepo, imageTag]
   );
 
   const install = `helm upgrade --install clusterwatch-agent ./agent/helm/clusterwatch-agent \\\n  --namespace clusterwatch-agent \\\n  --create-namespace \\\n  -f clusterwatch-values.yaml`;

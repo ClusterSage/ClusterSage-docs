@@ -1,4 +1,6 @@
 .terraform/
+.deploy-tmp/
+.tools/
 *.tfplan
 terraform.tfstate
 terraform.tfstate.backup
