@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
     app_env: str = "development"
-    app_name: str = "ClusterWatch"
+    app_name: str = "ClusterSage"
     public_app_url: str = "http://localhost:3000"
     public_api_url: str = "http://localhost:8000"
     database_url: str = "postgresql+asyncpg://clusterwatch:clusterwatch@localhost:5432/clusterwatch"

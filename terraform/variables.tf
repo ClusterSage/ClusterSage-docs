@@ -38,6 +38,16 @@ variable "frontdoor_sku_name" {
   default = "Premium_AzureFrontDoor"
 }
 
+variable "communication_data_location" {
+  type    = string
+  default = "United States"
+}
+
+variable "email_sender_display_name" {
+  type    = string
+  default = "ClusterSage"
+}
+
 variable "vnet_address_space" {
   type    = list(string)
   default = ["10.42.0.0/16"]

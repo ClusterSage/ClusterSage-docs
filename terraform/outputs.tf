@@ -12,6 +12,8 @@ output "storage_connection_string" {
   sensitive = true
 }
 output "managed_identity_client_id" { value = module.managed_identity.client_id }
+output "communication_email_endpoint" { value = module.email.communication_service_endpoint }
+output "communication_email_sender_address" { value = module.email.sender_address }
 output "key_vault_uri" { value = module.key_vault.vault_uri }
 output "application_insights_connection_string" {
   value     = module.monitoring.application_insights_connection_string

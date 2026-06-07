@@ -9,8 +9,13 @@ spec:
     matchLabels: { app: clusterwatch-backend }
   template:
     metadata:
-      labels: { app: clusterwatch-backend }
+      labels:
+        app: clusterwatch-backend
+{{- with .Values.podLabels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
       containers:

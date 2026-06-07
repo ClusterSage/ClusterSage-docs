@@ -7,6 +7,7 @@ metadata:
 spec:
   template:
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       restartPolicy: OnFailure
       containers:
         - name: migrate

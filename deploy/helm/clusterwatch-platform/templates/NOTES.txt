@@ -1,4 +1,4 @@
-ClusterWatch platform installed.
+ClusterSage platform installed.
 
 Verify:
   kubectl get pods -n {{ .Release.Namespace }}

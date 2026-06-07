@@ -42,6 +42,15 @@ module "service_bus" {
   tags                = local.tags
 }
 
+module "email" {
+  source              = "./modules/email"
+  name_prefix         = local.name_prefix
+  resource_group_name = module.resource_group.name
+  data_location       = var.communication_data_location
+  sender_display_name = var.email_sender_display_name
+  tags                = local.tags
+}
+
 module "storage" {
   source              = "./modules/storage"
   name_prefix         = local.name_prefix
@@ -119,10 +128,24 @@ resource "azurerm_role_assignment" "servicebus_receiver" {
   principal_id         = module.managed_identity.principal_id
 }
 
+resource "azurerm_role_assignment" "communication_email_owner" {
+  scope                = module.resource_group.id
+  role_definition_name = "Communication and Email Service Owner"
+  principal_id         = module.managed_identity.principal_id
+}
+
 resource "azurerm_role_assignment" "storage_blob_contributor" {
   scope                = module.storage.account_id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = module.managed_identity.principal_id
+}
+
+resource "azurerm_federated_identity_credential" "clusterwatch_workloads" {
+  name                      = "fic-${local.name_prefix}-clusterwatch-workloads"
+  user_assigned_identity_id = module.managed_identity.id
+  audience                  = ["api://AzureADTokenExchange"]
+  issuer                    = module.app_hosting.aks_oidc_issuer_url
+  subject                   = "system:serviceaccount:clusterwatch:clusterwatch-workloads"
 }
 
 resource "azurerm_role_assignment" "keyvault_current_user" {

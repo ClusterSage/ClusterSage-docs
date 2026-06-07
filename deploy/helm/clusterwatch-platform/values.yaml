@@ -2,6 +2,11 @@ global:
   imagePullSecrets: []
 namespace:
   create: false
+serviceAccount:
+  create: true
+  name: "clusterwatch-workloads"
+  annotations: {}
+podLabels: {}
 frontend:
   image:
     repository: ""

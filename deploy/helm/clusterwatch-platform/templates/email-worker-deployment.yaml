@@ -10,8 +10,13 @@ spec:
     matchLabels: { app: clusterwatch-email-worker }
   template:
     metadata:
-      labels: { app: clusterwatch-email-worker }
+      labels:
+        app: clusterwatch-email-worker
+{{- with .Values.podLabels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
       containers:
