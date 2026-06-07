@@ -221,18 +221,121 @@ def log_entry_from(record: dict[str, Any]) -> ResourceLogEntry:
         raw=record,
     )
 
+def resource_metadata(resource: dict[str, Any]) -> dict[str, Any]:
+    return resource.get("metadata") or {}
+
+def resource_namespace(resource: dict[str, Any]) -> str | None:
+    return resource_metadata(resource).get("namespace")
+
+def resource_name(resource: dict[str, Any]) -> str | None:
+    return resource_metadata(resource).get("name")
+
+def is_owned_by(resource: dict[str, Any], kind: str, name: str) -> bool:
+    for owner in resource_metadata(resource).get("ownerReferences") or []:
+        if owner.get("kind") == kind and owner.get("name") == name:
+            return True
+    return False
+
+def selector_matches(resource: dict[str, Any], selector: dict[str, Any]) -> bool:
+    if not selector:
+        return False
+    labels = resource_metadata(resource).get("labels") or {}
+    return all(labels.get(key) == value for key, value in selector.items())
+
+def match_labels(resource: dict[str, Any]) -> dict[str, Any]:
+    selector = (resource.get("spec") or {}).get("selector") or {}
+    return selector.get("matchLabels") or selector
+
+def related_pod_refs(snapshot: dict[str, Any], key: str, namespace: str | None, name: str) -> set[tuple[str | None, str]]:
+    pods = snapshot.get("pods", []) or []
+    if key == "pods":
+        return {(namespace, name)}
+    if key == "namespaces":
+        return {
+            (resource_namespace(pod), resource_name(pod))
+            for pod in pods
+            if resource_namespace(pod) == name and resource_name(pod)
+        }
+
+    resources = snapshot.get(key, []) or []
+    target = next(
+        (
+            item for item in resources
+            if resource_name(item) == name and resource_namespace(item) == namespace
+        ),
+        None,
+    )
+    if not target:
+        return set()
+
+    refs: set[tuple[str | None, str]] = set()
+    selector = match_labels(target)
+
+    if key == "deployments":
+        replica_sets = {
+            resource_name(rs)
+            for rs in snapshot.get("replicasets", []) or []
+            if resource_namespace(rs) == namespace and resource_name(rs) and is_owned_by(rs, "Deployment", name)
+        }
+        for pod in pods:
+            pod_name = resource_name(pod)
+            if resource_namespace(pod) != namespace or not pod_name:
+                continue
+            if any(is_owned_by(pod, "ReplicaSet", replica_set) for replica_set in replica_sets) or selector_matches(pod, selector):
+                refs.add((namespace, pod_name))
+        return refs
+
+    if key == "replicasets":
+        for pod in pods:
+            pod_name = resource_name(pod)
+            if resource_namespace(pod) == namespace and pod_name and (is_owned_by(pod, "ReplicaSet", name) or selector_matches(pod, selector)):
+                refs.add((namespace, pod_name))
+        return refs
+
+    if key in {"daemonsets", "statefulsets", "jobs"}:
+        owner_kind = KIND_LABELS[key]
+        for pod in pods:
+            pod_name = resource_name(pod)
+            if resource_namespace(pod) == namespace and pod_name and (is_owned_by(pod, owner_kind, name) or selector_matches(pod, selector)):
+                refs.add((namespace, pod_name))
+        return refs
+
+    if key == "cronjobs":
+        jobs = {
+            resource_name(job)
+            for job in snapshot.get("jobs", []) or []
+            if resource_namespace(job) == namespace and resource_name(job) and is_owned_by(job, "CronJob", name)
+        }
+        for pod in pods:
+            pod_name = resource_name(pod)
+            if resource_namespace(pod) == namespace and pod_name and any(is_owned_by(pod, "Job", job) for job in jobs):
+                refs.add((namespace, pod_name))
+        return refs
+
+    if key == "services":
+        selector = (target.get("spec") or {}).get("selector") or {}
+        for pod in pods:
+            pod_name = resource_name(pod)
+            if resource_namespace(pod) == namespace and pod_name and selector_matches(pod, selector):
+                refs.add((namespace, pod_name))
+        return refs
+
+    return refs
+
 @router.get("/{clusterId}/resources/{kind}/{namespace}/{name}/logs", response_model=list[ResourceLogEntry])
 async def resource_logs(clusterId: UUID, kind: str, namespace: str, name: str, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     await resource_detail(clusterId, kind, namespace, name, user, session)
     key = normalize_resource_key(kind)
-    if key != "pods":
-        return []
     expected_namespace = None if namespace == "_cluster" else namespace
+    snapshot = await latest_snapshot_payload(clusterId, session)
+    target_pods = related_pod_refs(snapshot, key, expected_namespace, name)
+    if not target_pods:
+        return []
     batches = (await session.execute(
         select(LogBatch)
         .where(LogBatch.cluster_id == clusterId, LogBatch.organization_id == user.organization_id)
         .order_by(LogBatch.created_at.desc())
-        .limit(25)
+        .limit(100)
     )).scalars().all()
     entries: list[ResourceLogEntry] = []
     try:
@@ -249,7 +352,7 @@ async def resource_logs(clusterId: UUID, kind: str, namespace: str, name: str, u
                 continue
             record_pod = record_field(record, "pod", "pod_name")
             record_namespace = record_field(record, "namespace", "namespace_name")
-            if record_pod == name and record_namespace == expected_namespace:
+            if (record_namespace, record_pod) in target_pods:
                 entries.append(log_entry_from(record))
                 if len(entries) >= 1000:
                     return entries
