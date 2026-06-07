@@ -93,7 +93,7 @@ export default function ResourceDetail({ params }: { params: Promise<{ clusterId
     <div>
       <Link className="text-sm text-blue-700 hover:underline" href={`/dashboard/clusters/${clusterId}`}>Back to resources</Link>
       <h1 className="mt-2 break-words text-3xl font-bold">{resource.name}</h1>
-      <p className="text-slate-600">{resource.kind} · {resource.namespace || "cluster"} · {resource.status || "Unknown"}</p>
+      <p className="text-slate-600">{resource.kind} / {resource.namespace || "cluster"} / {resource.status || "Unknown"}</p>
     </div>
 
     <div className="flex flex-wrap gap-2 border-b border-slate-200">
@@ -138,12 +138,12 @@ export default function ResourceDetail({ params }: { params: Promise<{ clusterId
 
     {tab === "Incidents" && <div className="card">
       <h2 className="text-lg font-semibold">No incidents detected yet.</h2>
-      <p className="mt-2 text-slate-600">AI-powered incident detection will appear here in a future update. Once enabled, KubeSage will analyze logs, events, and resource health to identify incidents.</p>
+      <p className="mt-2 text-slate-600">AI-powered incident detection will appear here in a future update. Once enabled, ClusterSage will analyze logs, events, and resource health to identify incidents.</p>
     </div>}
 
     {tab === "AI Suggestions" && <div className="card">
       <h2 className="text-lg font-semibold">AI suggestions will be available in a future release.</h2>
-      <p className="mt-2 text-slate-600">KubeSage will analyze detected incidents and recommend possible fixes here, including kubectl commands, YAML changes, scaling recommendations, and configuration fixes.</p>
+      <p className="mt-2 text-slate-600">ClusterSage will analyze detected incidents and recommend possible fixes here, including kubectl commands, YAML changes, scaling recommendations, and configuration fixes.</p>
     </div>}
   </div>;
 }

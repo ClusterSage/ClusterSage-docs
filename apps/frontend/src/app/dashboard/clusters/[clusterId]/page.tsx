@@ -43,7 +43,7 @@ export default function ClusterDetail({ params }: { params: Promise<{ clusterId:
     <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
       <div>
         <h1 className="text-3xl font-bold">{cluster.name}</h1>
-        <p className="text-slate-600">{cluster.provider} · {cluster.status} · {resources.length} resources</p>
+        <p className="text-slate-600">{cluster.provider} / {cluster.status} / {resources.length} resources</p>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
         <select className="input sm:w-44" value={kind} onChange={(event) => setKind(event.target.value)}>{kinds.map((item) => <option key={item}>{item}</option>)}</select>
@@ -57,13 +57,13 @@ export default function ClusterDetail({ params }: { params: Promise<{ clusterId:
       <div className="card"><p className="text-sm text-slate-500">Primary resource type</p><p className="mt-2 font-medium">{resources.some((item) => item.kind === "Pod") ? "Pods available" : "Waiting for pod snapshot"}</p></div>
     </div>
 
-    {filtered.length === 0 && <div className="card"><h2 className="font-semibold">No resources found</h2><p className="mt-2 text-slate-600">KubeSage will show resources here after the agent sends a cluster snapshot.</p></div>}
+    {filtered.length === 0 && <div className="card"><h2 className="font-semibold">No resources found</h2><p className="mt-2 text-slate-600">ClusterSage will show resources here after the agent sends a cluster snapshot.</p></div>}
 
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm shadow-slate-200/60">
       <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Kind</th><th className="px-4 py-3">Namespace</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Node</th><th className="px-4 py-3">Restarts</th><th className="px-4 py-3">Age</th></tr></thead>
         <tbody className="divide-y divide-slate-100">
-          {filtered.map((item) => <tr key={`${item.kind}:${item.namespace || ""}:${item.name}`} className="hover:bg-slate-50">
+          {filtered.map((item) => <tr key={`${item.kind}:${item.namespace || ""}:${item.name}`} className="transition hover:bg-blue-50/40">
             <td className="px-4 py-3 font-medium"><Link className="text-blue-700 hover:underline" href={resourceHref(clusterId, item)}>{item.name}</Link></td>
             <td className="px-4 py-3">{item.kind}</td>
             <td className="px-4 py-3 text-slate-600">{item.namespace || "cluster"}</td>
