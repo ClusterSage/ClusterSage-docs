@@ -1,11 +1,11 @@
 variable "project" {
   type    = string
-  default = "kubesage"
+  default = "clustersage"
 }
 
 variable "environment" {
   type    = string
-  default = "prod"
+  default = "dev"
 }
 
 variable "location" {
@@ -20,7 +20,7 @@ variable "tags" {
 
 variable "domain_name" {
   type    = string
-  default = "nexaflow.site"
+  default = "dev.nexaflow.site"
 }
 
 variable "origin_host_name" {
@@ -50,22 +50,32 @@ variable "email_sender_display_name" {
 
 variable "vnet_address_space" {
   type    = list(string)
-  default = ["10.42.0.0/16"]
+  default = ["10.44.0.0/16"]
 }
 
 variable "aks_subnet_prefix" {
   type    = list(string)
-  default = ["10.42.1.0/24"]
+  default = ["10.44.0.0/24"]
+}
+
+variable "private_endpoint_subnet_prefix" {
+  type    = list(string)
+  default = ["10.44.10.0/24"]
+}
+
+variable "management_subnet_prefix" {
+  type    = list(string)
+  default = []
 }
 
 variable "acr_name" {
   type    = string
-  default = "acrkubesageprod"
+  default = "acrclustersagedev"
 }
 
 variable "aks_name" {
   type    = string
-  default = "aks-kubesage-prod"
+  default = "aks-clustersage-dev"
 }
 
 variable "aks_node_count" {
@@ -80,7 +90,7 @@ variable "aks_vm_size" {
 
 variable "postgres_admin_login" {
   type    = string
-  default = "kubesageadmin"
+  default = "clustersageadmin"
 }
 
 variable "postgres_server_name" {
@@ -111,4 +121,80 @@ variable "postgres_storage_mb" {
 variable "create_database" {
   type    = bool
   default = true
+}
+
+variable "deploy_kubernetes" {
+  type        = bool
+  default     = true
+  description = "Deploy kgateway and the ClusterSage platform Helm chart into AKS."
+}
+
+variable "kgateway_namespace" {
+  type    = string
+  default = "kgateway-system"
+}
+
+variable "kgateway_chart_version" {
+  type    = string
+  default = "v2.3.0"
+}
+
+variable "gateway_api_crds_url" {
+  type    = string
+  default = "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml"
+}
+
+variable "platform_namespace" {
+  type    = string
+  default = "clusterwatch"
+}
+
+variable "platform_release_name" {
+  type    = string
+  default = "clustersage-platform"
+}
+
+variable "platform_gateway_name" {
+  type    = string
+  default = "clustersage-public"
+}
+
+variable "platform_gateway_hostname" {
+  type    = string
+  default = ""
+}
+
+variable "frontend_image_repository" {
+  type    = string
+  default = null
+}
+
+variable "frontend_image_tag" {
+  type    = string
+  default = "0.1.3"
+}
+
+variable "backend_image_repository" {
+  type    = string
+  default = null
+}
+
+variable "backend_image_tag" {
+  type    = string
+  default = "0.1.5"
+}
+
+variable "frontend_replica_count" {
+  type    = number
+  default = 2
+}
+
+variable "backend_replica_count" {
+  type    = number
+  default = 2
+}
+
+variable "email_worker_replica_count" {
+  type    = number
+  default = 1
 }

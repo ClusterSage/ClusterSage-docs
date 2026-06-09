@@ -1,4 +1,5 @@
 data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
 
 module "resource_group" {
   source   = "./modules/resource-group"
@@ -8,13 +9,15 @@ module "resource_group" {
 }
 
 module "networking" {
-  source              = "./modules/networking"
-  name_prefix         = local.name_prefix
-  resource_group_name = module.resource_group.name
-  location            = module.resource_group.location
-  address_space       = var.vnet_address_space
-  aks_subnet_prefixes = var.aks_subnet_prefix
-  tags                = local.tags
+  source                           = "./modules/networking"
+  name_prefix                      = local.name_prefix
+  resource_group_name              = module.resource_group.name
+  location                         = module.resource_group.location
+  address_space                    = var.vnet_address_space
+  aks_subnet_prefixes              = var.aks_subnet_prefix
+  private_endpoint_subnet_prefixes = var.private_endpoint_subnet_prefix
+  management_subnet_prefixes       = var.management_subnet_prefix
+  tags                             = local.tags
 }
 
 module "managed_identity" {

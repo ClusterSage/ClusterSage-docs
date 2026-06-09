@@ -1,8 +1,8 @@
-# AI Context For KubeSage
+# AI Context For ClusterSage
 
-The product name is KubeSage. Frontend-visible branding must use KubeSage only. Do not rename internal folders, Helm release names, database tables, environment variables, or Kubernetes resources just to satisfy UI branding.
+The product name is ClusterSage. Frontend-visible branding must use ClusterSage only. Do not rename internal folders, Helm release names, database tables, environment variables, or Kubernetes resources just to satisfy UI branding.
 
-KubeSage uses a customer-installed, read-only in-cluster agent. The SaaS backend does not scan customer Azure subscriptions. Users must only see their own organization, clusters, resources, logs, issues, and audit data.
+ClusterSage uses a customer-installed, read-only in-cluster agent. The SaaS backend does not scan customer Azure subscriptions. Users must only see their own organization, clusters, resources, logs, issues, and audit data.
 
 Cluster resource pages are resource-centric. After selecting a cluster, users see Kubernetes resources. Selecting a resource opens a detail page with these tabs:
 

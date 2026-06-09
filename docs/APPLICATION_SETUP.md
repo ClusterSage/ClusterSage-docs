@@ -1,6 +1,6 @@
-# KubeSage Application Setup
+# ClusterSage Application Setup
 
-KubeSage is a multi-tenant Kubernetes observability SaaS. Customers install a read-only agent in their cluster; the agent pushes logs, events, and snapshots to the FastAPI backend over HTTPS. The Next.js frontend lets authenticated users inspect clusters, resources, pod logs, incidents, and future AI suggestions.
+ClusterSage is a multi-tenant Kubernetes observability SaaS. Customers install a read-only agent in their cluster; the agent pushes logs, events, and snapshots to the FastAPI backend over HTTPS. The Next.js frontend lets authenticated users inspect clusters, resources, pod logs, incidents, and future AI suggestions.
 
 ## Architecture
 
@@ -44,7 +44,7 @@ Important backend variables:
 Important frontend variables:
 
 - `NEXT_PUBLIC_API_URL`
-- `NEXT_PUBLIC_APP_NAME=KubeSage`
+- `NEXT_PUBLIC_APP_NAME=ClusterSage`
 
 ## Authentication
 

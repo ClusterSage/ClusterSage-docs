@@ -32,7 +32,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "main" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "main" {
-  name                           = "kubesage-origin"
+  name                           = "clustersage-origin"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.main.id
   enabled                        = true
   host_name                      = var.origin_host_name

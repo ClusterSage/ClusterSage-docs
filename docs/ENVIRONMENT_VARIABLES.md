@@ -5,7 +5,7 @@
 | Variable | Required | Secret | Example | Azure source |
 |---|---:|---:|---|---|
 | `APP_ENV` | yes | no | `production` | deployment environment |
-| `APP_NAME` | no | no | `KubeSage` | app display name |
+| `APP_NAME` | no | no | `ClusterSage` | app display name |
 | `PUBLIC_APP_URL` | yes | no | `https://app.example.com` | DNS name |
 | `PUBLIC_API_URL` | yes | no | `https://api.example.com` | DNS name |
 | `DATABASE_URL` | yes | yes | `postgresql+asyncpg://user:pass@server.postgres.database.azure.com:5432/clusterwatch?ssl=require` | PostgreSQL Flexible Server |
@@ -35,7 +35,7 @@
 | Variable | Required | Secret | Example |
 |---|---:|---:|---|
 | `NEXT_PUBLIC_API_URL` | yes | no | `https://api.example.com` |
-| `NEXT_PUBLIC_APP_NAME` | no | no | `KubeSage` |
+| `NEXT_PUBLIC_APP_NAME` | no | no | `ClusterSage` |
 
 ## Agent
 

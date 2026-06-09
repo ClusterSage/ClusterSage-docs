@@ -1,6 +1,6 @@
-# KubeSage
+# ClusterSage
 
-KubeSage is a multi-tenant Kubernetes/AKS observability SaaS platform using **Model C: customer-installed agent/connector**. The SaaS never scans customer Azure subscriptions and never needs Azure Lighthouse. Customers install a read-only Helm agent inside their Kubernetes cluster; the agent pushes logs, events, snapshots, and health data outward to the backend over HTTPS.
+ClusterSage is a multi-tenant Kubernetes/AKS observability SaaS platform using **Model C: customer-installed agent/connector**. The SaaS never scans customer Azure subscriptions and never needs Azure Lighthouse. Customers install a read-only Helm agent inside their Kubernetes cluster; the agent pushes logs, events, snapshots, and health data outward to the backend over HTTPS.
 
 The repository still contains historical technical names such as `clusterwatch-*` in chart names, namespaces, image examples, database names, and storage paths. Treat those as internal deployment identifiers unless a migration explicitly changes them.
 

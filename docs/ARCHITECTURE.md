@@ -1,6 +1,6 @@
 # Architecture
 
-KubeSage uses the customer-installed connector model. The SaaS does not connect to customer Azure subscriptions, does not require Azure Lighthouse, and works with private AKS API servers because the collector runs inside the cluster and pushes outbound HTTPS traffic.
+ClusterSage uses the customer-installed connector model. The SaaS does not connect to customer Azure subscriptions, does not require Azure Lighthouse, and works with private AKS API servers because the collector runs inside the cluster and pushes outbound HTTPS traffic.
 
 ## Components
 

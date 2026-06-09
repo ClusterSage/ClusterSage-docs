@@ -1,6 +1,6 @@
 # AI Future Design
 
-KubeSage is AI-ready without calling an AI provider today.
+ClusterSage is AI-ready without calling an AI provider today.
 
 The current resource detail page includes Incidents and AI Suggestions tabs as placeholders. They must remain honest placeholders until a real AI detection/remediation pipeline exists.
 

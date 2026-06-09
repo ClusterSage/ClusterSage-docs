@@ -1,0 +1,27 @@
+project                        = "clustersage"
+environment                    = "prod"
+location                       = "eastus"
+domain_name                    = "www.nexaflow.site"
+frontdoor_sku_name             = "Premium_AzureFrontDoor"
+origin_host_name               = "replace-after-kgateway-load-balancer-is-created"
+origin_host_header             = "replace-after-kgateway-load-balancer-is-created"
+acr_name                       = "acrclustersageprod"
+aks_name                       = "aks-clustersage-prod"
+aks_node_count                 = 2
+aks_vm_size                    = "Standard_D4s_v5"
+vnet_address_space             = ["10.42.0.0/16"]
+aks_subnet_prefix              = ["10.42.0.0/22"]
+private_endpoint_subnet_prefix = ["10.42.10.0/24"]
+management_subnet_prefix       = ["10.42.30.0/24"]
+database_location              = "eastus"
+postgres_server_name           = "pg-clustersage-prod"
+postgres_admin_login           = "clustersageadmin"
+postgres_sku_name              = "GP_Standard_D2s_v3"
+postgres_storage_mb            = 65536
+deploy_kubernetes              = true
+platform_gateway_hostname      = "www.nexaflow.site"
+frontend_image_tag             = "0.1.3"
+backend_image_tag              = "0.1.5"
+tags = {
+  Owner = "platform"
+}

@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: kubesage-public
+  name: clustersage-public
   namespace: kgateway-system
 spec:
   gatewayClassName: kgateway
@@ -20,7 +20,7 @@ metadata:
   namespace: clusterwatch
 spec:
   parentRefs:
-    - name: kubesage-public
+    - name: clustersage-public
       namespace: kgateway-system
       sectionName: http
   rules:
@@ -42,7 +42,7 @@ metadata:
   namespace: clusterwatch
 spec:
   parentRefs:
-    - name: kubesage-public
+    - name: clustersage-public
       namespace: kgateway-system
       sectionName: http
   rules:

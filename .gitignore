@@ -1,4 +1,6 @@
 .terraform/
+.state-backups/
+.provider-downloads/
 .deploy-tmp/
 .tools/
 *.tfplan

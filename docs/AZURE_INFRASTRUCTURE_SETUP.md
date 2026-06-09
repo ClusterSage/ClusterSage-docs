@@ -1,6 +1,6 @@
-# KubeSage Azure Infrastructure Setup
+# ClusterSage Azure Infrastructure Setup
 
-The Terraform stack in `terraform/` provisions the Azure foundation for KubeSage:
+The Terraform stack in `terraform/` provisions the Azure foundation for ClusterSage:
 
 - Resource group
 - Virtual network and AKS subnet
@@ -92,7 +92,7 @@ In GoDaddy DNS for `nexaflow.site`, create:
 
 - `CNAME` record:
   - Name: `@` if GoDaddy supports apex CNAME/flattening, otherwise use `www`
-  - Value: the Front Door endpoint hostname, for example `fde-kubesage-prod.azurefd.net`
+  - Value: the Front Door endpoint hostname, for example `fde-clustersage-prod.azurefd.net`
 - `TXT` record for Azure domain validation:
   - Name: `_dnsauth` for apex validation, or `_dnsauth.www` for `www.nexaflow.site`
   - Value: `frontdoor_custom_domain_validation_token`
