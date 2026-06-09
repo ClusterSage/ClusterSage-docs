@@ -94,6 +94,12 @@ variable "acr_name" {
   default = "acrclustersagedev"
 }
 
+variable "acr_anonymous_pull_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable unauthenticated pulls from the ACR. Keep true only for registries intentionally publishing public agent images."
+}
+
 variable "aks_name" {
   type    = string
   default = "aks-clustersage-dev"
@@ -147,6 +153,12 @@ variable "postgres_storage_mb" {
 variable "create_database" {
   type    = bool
   default = true
+}
+
+variable "key_vault_secrets_officer_principal_id" {
+  type        = string
+  default     = null
+  description = "Optional principal ID to receive Key Vault Secrets Officer. Use for existing environments so CI does not replace a human/admin assignment."
 }
 
 variable "storage_container_name" {

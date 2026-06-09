@@ -1,10 +1,11 @@
 resource "azurerm_container_registry" "main" {
-  name                = var.acr_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  sku                 = "Standard"
-  admin_enabled       = false
-  tags                = var.tags
+  name                   = var.acr_name
+  resource_group_name    = var.resource_group_name
+  location               = var.location
+  sku                    = "Standard"
+  admin_enabled          = false
+  anonymous_pull_enabled = var.acr_anonymous_pull_enabled
+  tags                   = var.tags
 }
 
 resource "azurerm_kubernetes_cluster" "main" {

@@ -75,6 +75,7 @@ module "key_vault" {
 module "app_hosting" {
   source                     = "./modules/app-hosting"
   acr_name                   = var.acr_name
+  acr_anonymous_pull_enabled = var.acr_anonymous_pull_enabled
   aks_name                   = var.aks_name
   resource_group_name        = module.resource_group.name
   location                   = module.resource_group.location
@@ -156,5 +157,5 @@ resource "azurerm_federated_identity_credential" "clustersage_workloads" {
 resource "azurerm_role_assignment" "keyvault_current_user" {
   scope                = module.key_vault.id
   role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = coalesce(var.key_vault_secrets_officer_principal_id, data.azurerm_client_config.current.object_id)
 }
