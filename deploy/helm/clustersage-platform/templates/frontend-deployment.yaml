@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clustersage-frontend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels: { app: clustersage-frontend }
+  template:
+    metadata:
+      labels: { app: clustersage-frontend }
+    spec:
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports: [{ name: http, containerPort: 3000 }]
+          env:
+            - name: NEXT_PUBLIC_API_URL
+              valueFrom: { configMapKeyRef: { name: clustersage-config, key: NEXT_PUBLIC_API_URL } }

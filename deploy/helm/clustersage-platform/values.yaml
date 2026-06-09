@@ -1,0 +1,68 @@
+global:
+  imagePullSecrets: []
+namespace:
+  create: false
+serviceAccount:
+  create: true
+  name: "clustersage-workloads"
+  annotations: {}
+podLabels: {}
+frontend:
+  image:
+    repository: ""
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  env:
+    NEXT_PUBLIC_API_URL: ""
+backend:
+  image:
+    repository: ""
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  env:
+    APP_ENV: "production"
+    PUBLIC_APP_URL: ""
+    PUBLIC_API_URL: ""
+    CORS_ALLOWED_ORIGINS: ""
+    AZURE_STORAGE_CONTAINER: "clustersage-data"
+    AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE: ""
+    CLUSTER_CONNECTED_QUEUE_NAME: "cluster-connected"
+    AZURE_COMMUNICATION_EMAIL_ENDPOINT: ""
+    EMAIL_SENDER_ADDRESS: ""
+  secrets:
+    DATABASE_URL: ""
+    JWT_SECRET: ""
+    AGENT_TOKEN_SECRET: ""
+    AZURE_STORAGE_CONNECTION_STRING: ""
+    AZURE_SERVICEBUS_CONNECTION_STRING: ""
+    AZURE_COMMUNICATION_EMAIL_CONNECTION_STRING: ""
+emailWorker:
+  enabled: true
+  replicaCount: 1
+ingress:
+  enabled: false
+  className: "nginx"
+  hosts:
+    - host: app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: frontend
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: backend
+  tls:
+    enabled: false
+    secretName: ""
+gateway:
+  enabled: true
+  className: "kgateway"
+  namespace: "kgateway-system"
+  name: "clustersage-public"
+  hostname: ""
+migrations:
+  enabled: true

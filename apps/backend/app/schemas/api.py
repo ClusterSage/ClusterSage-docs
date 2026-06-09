@@ -95,6 +95,27 @@ class SnapshotResponse(BaseModel):
     created_at: datetime
     model_config = {"from_attributes": True}
 
+class ResourceSummary(BaseModel):
+    name: str
+    namespace: str | None = None
+    kind: str
+    status: str | None = None
+    age: str | None = None
+    node_name: str | None = None
+    restart_count: int | None = None
+    labels: dict[str, str] = Field(default_factory=dict)
+    last_updated_at: datetime | None = None
+    created_at: datetime | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+class ResourceLogEntry(BaseModel):
+    timestamp: str | None = None
+    namespace: str | None = None
+    pod: str | None = None
+    container: str | None = None
+    message: str
+    raw: dict[str, Any] = Field(default_factory=dict)
+
 class IssueResponse(BaseModel):
     id: UUID
     namespace: str | None

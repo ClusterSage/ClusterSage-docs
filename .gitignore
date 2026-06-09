@@ -1,0 +1,15 @@
+.terraform/
+.state-backups/
+.provider-downloads/
+.terraform-provider-mirror/
+.terraformrc.local
+.deploy-tmp/
+.tools/
+*.tfplan
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+node_modules/
+.next/
+__pycache__/
+*.pyc

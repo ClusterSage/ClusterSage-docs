@@ -6,10 +6,11 @@ auth:
 cluster:
   name: ""
   provider: "aks"
+imagePullSecrets: []
 agent:
   image:
     repository: ""
-    tag: "0.1.0"
+    tag: "stable"
     pullPolicy: IfNotPresent
   logLevel: "info"
   heartbeatIntervalSeconds: 30

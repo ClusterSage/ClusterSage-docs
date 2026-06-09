@@ -1,0 +1,100 @@
+name: Publish customer agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Agent version tag to publish
+        required: false
+        default: "0.1.1"
+      update_stable:
+        description: Also move the stable tag to this build
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: acrkubesageprod
+  AGENT_IMAGE_REPOSITORY: clustersage-agent
+  LEGACY_AGENT_IMAGE_REPOSITORY: clusterwatch-agent
+  AGENT_CHART_PATH: agent/helm/clusterwatch-agent
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Enable public anonymous pull
+        run: az acr update --name "$ACR_NAME" --anonymous-pull-enabled true
+
+      - name: ACR login
+        run: az acr login --name "$ACR_NAME"
+
+      - name: Build and push agent
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOGIN_SERVER="$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)"
+          VERSION="${{ inputs.version }}"
+          SHA_TAG="sha-${GITHUB_SHA::12}"
+
+          docker build \
+            -t "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$VERSION" \
+            -t "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$SHA_TAG" \
+            -t "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:$VERSION" \
+            -t "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:$SHA_TAG" \
+            agent/collector
+
+          docker push "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$VERSION"
+          docker push "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$SHA_TAG"
+          docker push "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:$VERSION"
+          docker push "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:$SHA_TAG"
+
+          if [ "${{ inputs.update_stable }}" = "true" ]; then
+            docker tag "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$VERSION" "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:stable"
+            docker tag "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$VERSION" "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:stable"
+            docker push "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:stable"
+            docker push "$LOGIN_SERVER/$LEGACY_AGENT_IMAGE_REPOSITORY:stable"
+          fi
+
+      - name: Verify anonymous pull endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOGIN_SERVER="$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)"
+          VERIFY_TAG="${{ inputs.version }}"
+          if [ "${{ inputs.update_stable }}" = "true" ]; then
+            VERIFY_TAG="stable"
+          fi
+          docker logout "$LOGIN_SERVER" || true
+          docker pull "$LOGIN_SERVER/$AGENT_IMAGE_REPOSITORY:$VERIFY_TAG"
+
+      - name: Package and push Helm chart
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOGIN_SERVER="$(az acr show --name "$ACR_NAME" --query loginServer -o tsv)"
+          ACCESS_TOKEN="$(az acr login --name "$ACR_NAME" --expose-token --query accessToken -o tsv)"
+
+          helm registry login "$LOGIN_SERVER" \
+            --username 00000000-0000-0000-0000-000000000000 \
+            --password "$ACCESS_TOKEN"
+
+          helm package "$AGENT_CHART_PATH" --destination /tmp/clustersage-agent-chart
+          helm push /tmp/clustersage-agent-chart/*.tgz "oci://$LOGIN_SERVER/helm"

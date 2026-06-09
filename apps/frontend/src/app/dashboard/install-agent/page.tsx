@@ -2,13 +2,15 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { api, apiUrl } from "@/lib/api";
+import { api, getApiUrl } from "@/lib/api";
 import type { AgentKey, User } from "@/types/api";
 import { CodeBlock } from "@/components/CodeBlock";
 
-const publicAgentImage = process.env.NEXT_PUBLIC_AGENT_IMAGE || "acrcwagentpubcwb1rqcvlk.azurecr.io/clusterwatch-agent:0.1.1";
+const publicAgentImage = process.env.NEXT_PUBLIC_AGENT_IMAGE || "acrkubesageprod.azurecr.io/clustersage-agent:stable";
+const agentChart = process.env.NEXT_PUBLIC_AGENT_CHART || "oci://acrkubesageprod.azurecr.io/helm/clusterwatch-agent";
+const agentChartVersion = process.env.NEXT_PUBLIC_AGENT_CHART_VERSION || "0.1.0";
 const defaultAgentRepository = publicAgentImage.replace(/:[^/:]+$/, "");
-const defaultAgentTag = publicAgentImage.match(/:([^/:]+)$/)?.[1] || "0.1.1";
+const defaultAgentTag = publicAgentImage.match(/:([^/:]+)$/)?.[1] || "stable";
 
 export default function InstallAgentPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -35,19 +37,20 @@ export default function InstallAgentPage() {
   }
 
   const exactImage = `${imageRepo}:${imageTag}`;
-  const pullCommands = `docker pull ${publicAgentImage}\ncrictl pull ${publicAgentImage}\nkubectl run clusterwatch-agent-pull-check \\\n  --rm -it \\\n  --restart=Never \\\n  --image=${publicAgentImage} \\\n  --command -- python -c "print('public-pull-ok')"`;
+  const backendUrl = getApiUrl();
+  const pullCommands = `docker pull ${exactImage}\ncrictl pull ${exactImage}\nkubectl run clusterwatch-agent-pull-check \\\n  --rm -it \\\n  --restart=Never \\\n  --image=${exactImage} \\\n  --command -- python -c "print('public-pull-ok')"`;
 
   const values = useMemo(
-    () => `backend:\n  url: "${apiUrl}"\nauth:\n  email: "${user?.email || "you@example.com"}"\n  accessKey: "${accessKey || "cw_live_copy_generated_key_here"}"\ncluster:\n  name: "${clusterName}"\n  provider: "aks"\nagent:\n  image:\n    repository: "${imageRepo}"\n    tag: "${imageTag}"\n    pullPolicy: IfNotPresent\n  logLevel: "info"\n  heartbeatIntervalSeconds: 30\n  snapshotIntervalSeconds: 60\nfluentbit:\n  enabled: true\n  excludeAgentNamespace: true`,
-    [user, accessKey, clusterName, imageRepo, imageTag]
+    () => `backend:\n  url: "${backendUrl}"\nauth:\n  email: "${user?.email || "you@example.com"}"\n  accessKey: "${accessKey || "cw_live_copy_generated_key_here"}"\ncluster:\n  name: "${clusterName}"\n  provider: "aks"\nagent:\n  image:\n    repository: "${imageRepo}"\n    tag: "${imageTag}"\n    pullPolicy: IfNotPresent\n  logLevel: "info"\n  heartbeatIntervalSeconds: 30\n  snapshotIntervalSeconds: 60\nfluentbit:\n  enabled: true\n  excludeAgentNamespace: true`,
+    [backendUrl, user, accessKey, clusterName, imageRepo, imageTag]
   );
 
-  const install = `helm upgrade --install clusterwatch-agent ./agent/helm/clusterwatch-agent \\\n  --namespace clusterwatch-agent \\\n  --create-namespace \\\n  -f clusterwatch-values.yaml`;
+  const install = `helm upgrade --install clusterwatch-agent ${agentChart} \\\n  --version ${agentChartVersion} \\\n  --namespace clusterwatch-agent \\\n  --create-namespace \\\n  -f clusterwatch-values.yaml`;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Install ClusterWatch agent</h1>
+        <h1 className="text-3xl font-bold">Install ClusterSage agent</h1>
         <p className="text-slate-600">
           Logged in as {user?.email || "loading..."}. The agent runs inside your cluster and pushes data outward.
         </p>
@@ -59,7 +62,7 @@ export default function InstallAgentPage() {
         <p className="text-sm text-slate-700">
           This image is publicly pullable without Docker login or Kubernetes image pull secrets.
         </p>
-        <CodeBlock value={publicAgentImage} />
+        <CodeBlock value={exactImage} />
         <CodeBlock value={pullCommands} />
       </div>
 
@@ -79,9 +82,9 @@ export default function InstallAgentPage() {
 
       <div className="card space-y-3">
         <h2 className="font-bold">2. Add Helm repository or use local chart</h2>
-        <CodeBlock value={`helm repo add clusterwatch https://<your-domain>/helm\nhelm repo update`} />
+        <CodeBlock value={`helm show chart ${agentChart} --version ${agentChartVersion}`} />
         <p className="text-sm text-slate-600">
-          For this repo, install directly from <code>./agent/helm/clusterwatch-agent</code> until you publish the chart.
+          The agent chart is published as an OCI Helm chart. No repository add step is required.
         </p>
       </div>
 

@@ -5,7 +5,7 @@
 | Variable | Required | Secret | Example | Azure source |
 |---|---:|---:|---|---|
 | `APP_ENV` | yes | no | `production` | deployment environment |
-| `APP_NAME` | no | no | `ClusterWatch` | fixed app name |
+| `APP_NAME` | no | no | `ClusterSage` | app display name |
 | `PUBLIC_APP_URL` | yes | no | `https://app.example.com` | DNS name |
 | `PUBLIC_API_URL` | yes | no | `https://api.example.com` | DNS name |
 | `DATABASE_URL` | yes | yes | `postgresql+asyncpg://user:pass@server.postgres.database.azure.com:5432/clusterwatch?ssl=require` | PostgreSQL Flexible Server |
@@ -16,6 +16,12 @@
 | `AGENT_TOKEN_EXPIRE_HOURS` | yes | no | `720` | policy |
 | `AZURE_STORAGE_CONNECTION_STRING` | yes | yes | `DefaultEndpointsProtocol=https;...` | `az storage account show-connection-string` |
 | `AZURE_STORAGE_CONTAINER` | yes | no | `clusterwatch-data` | fixed private container |
+| `AZURE_SERVICEBUS_CONNECTION_STRING` | production fallback | yes | empty | fallback Service Bus auth |
+| `AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE` | production | no | empty | Managed Identity Service Bus auth |
+| `CLUSTER_CONNECTED_QUEUE_NAME` | production | no | `cluster-connected` | cluster connection notification queue |
+| `AZURE_COMMUNICATION_EMAIL_CONNECTION_STRING` | production fallback | yes | empty | fallback email auth |
+| `AZURE_COMMUNICATION_EMAIL_ENDPOINT` | production | no | empty | Managed Identity email endpoint |
+| `EMAIL_SENDER_ADDRESS` | production | no | empty | verified ACS sender address |
 | `LOG_BATCH_MAX_SIZE_MB` | yes | no | `10` | ingestion policy |
 | `LOG_RETENTION_DAYS` | no | no | `30` | lifecycle policy input |
 | `CORS_ALLOWED_ORIGINS` | yes | no | `https://app.example.com` | frontend URL |
@@ -29,7 +35,7 @@
 | Variable | Required | Secret | Example |
 |---|---:|---:|---|
 | `NEXT_PUBLIC_API_URL` | yes | no | `https://api.example.com` |
-| `NEXT_PUBLIC_APP_NAME` | no | no | `ClusterWatch` |
+| `NEXT_PUBLIC_APP_NAME` | no | no | `ClusterSage` |
 
 ## Agent
 

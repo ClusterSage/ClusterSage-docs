@@ -25,7 +25,7 @@ def sanitize(obj: Any) -> Any:
 
 def collect_snapshot() -> dict[str, Any]:
     load_config()
-    core = client.CoreV1Api(); apps = client.AppsV1Api(); networking = client.NetworkingV1Api()
+    core = client.CoreV1Api(); apps = client.AppsV1Api(); batch = client.BatchV1Api(); networking = client.NetworkingV1Api()
     snapshot: dict[str, Any] = {}
     snapshot["pods"] = [sanitize(i) for i in core.list_pod_for_all_namespaces(watch=False).items]
     snapshot["nodes"] = [sanitize(i) for i in core.list_node(watch=False).items]
@@ -36,6 +36,8 @@ def collect_snapshot() -> dict[str, Any]:
     snapshot["daemonsets"] = [sanitize(i) for i in apps.list_daemon_set_for_all_namespaces(watch=False).items]
     snapshot["statefulsets"] = [sanitize(i) for i in apps.list_stateful_set_for_all_namespaces(watch=False).items]
     snapshot["replicasets"] = [sanitize(i) for i in apps.list_replica_set_for_all_namespaces(watch=False).items]
+    snapshot["jobs"] = [sanitize(i) for i in batch.list_job_for_all_namespaces(watch=False).items]
+    snapshot["cronjobs"] = [sanitize(i) for i in batch.list_cron_job_for_all_namespaces(watch=False).items]
     try:
         snapshot["ingresses"] = [sanitize(i) for i in networking.list_ingress_for_all_namespaces(watch=False).items]
     except ApiException as exc:

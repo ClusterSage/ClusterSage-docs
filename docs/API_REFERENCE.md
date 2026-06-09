@@ -19,6 +19,9 @@ Use `Authorization: Bearer <jwt>`.
 - `GET /api/clusters`: list organization clusters.
 - `GET /api/clusters/{clusterId}`: cluster details.
 - `GET /api/clusters/{clusterId}/logs`: log batch indexes.
+- `GET /api/clusters/{clusterId}/resources`: tenant-scoped resources from the latest cluster snapshot.
+- `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}`: selected resource details.
+- `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}/logs`: selected pod log lines from recent log batches.
 - `GET /api/clusters/{clusterId}/issues`: detected issues.
 - `GET /api/clusters/{clusterId}/snapshots/latest`: latest snapshot index.
 - `GET /api/audit-logs`: recent tenant audit logs.

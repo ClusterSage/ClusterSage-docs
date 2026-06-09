@@ -1,6 +1,8 @@
-# ClusterWatch
+# ClusterSage
 
-ClusterWatch is a multi-tenant Kubernetes/AKS observability SaaS platform using **Model C: customer-installed agent/connector**. The SaaS never scans customer Azure subscriptions and never needs Azure Lighthouse. Customers install a read-only Helm agent inside their Kubernetes cluster; the agent pushes logs, events, snapshots, and health data outward to the backend over HTTPS.
+ClusterSage is a multi-tenant Kubernetes/AKS observability SaaS platform using **Model C: customer-installed agent/connector**. The SaaS never scans customer Azure subscriptions and never needs Azure Lighthouse. Customers install a read-only Helm agent inside their Kubernetes cluster; the agent pushes logs, events, snapshots, and health data outward to the backend over HTTPS.
+
+The repository still contains historical technical names such as `clusterwatch-*` in chart names, namespaces, image examples, database names, and storage paths. Treat those as internal deployment identifiers unless a migration explicitly changes them.
 
 ## Architecture
 
@@ -14,7 +16,7 @@ ClusterWatch SaaS frontend -> FastAPI backend -> PostgreSQL metadata
 
 ## Features
 
-- Next.js dashboard with register, login, protected routes, cluster views, log batches, issues, settings, and agent-key management.
+- Next.js dashboard with register, login, protected routes, cluster resource inventory, resource details, pod logs, issue placeholders, AI suggestion placeholders, settings, and agent-key management.
 - FastAPI backend with JWT auth, hashed agent keys, agent registration, heartbeat, ingestion, audit logs, and OpenAPI docs.
 - PostgreSQL metadata tables for users, orgs, keys, clusters, log indexes, snapshots, issues, AI recommendation metadata, and audits.
 - Private Azure Blob container `clusterwatch-data` for compressed raw logs, events, snapshots, and future AI context files.
@@ -28,6 +30,13 @@ ClusterWatch SaaS frontend -> FastAPI backend -> PostgreSQL metadata
 - `agent/collector` - Python collector that runs in customer clusters.
 - `agent/helm/clusterwatch-agent` - customer-installed Helm chart.
 - `deploy/helm/clusterwatch-platform` - SaaS platform Helm chart for AKS.
+- `terraform` - Azure infrastructure modules for Front Door, WAF, AKS, Service Bus, Key Vault, PostgreSQL, and monitoring.
+
+## Setup Guides
+
+- [Application setup](docs/APPLICATION_SETUP.md)
+- [Azure infrastructure setup](docs/AZURE_INFRASTRUCTURE_SETUP.md)
+- [Future AI design](docs/AI_FUTURE_DESIGN.md)
 - `deploy/k8s`, `deploy/vm`, `deploy/vmss`, `deploy/nginx` - deployment manifests and scripts.
 - `docs` - local, VM, VMSS, AKS, Helm, security, API, smoke test, and storage docs.
 - `.codex` - context files for future AI coding sessions.

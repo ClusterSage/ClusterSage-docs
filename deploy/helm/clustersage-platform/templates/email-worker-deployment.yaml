@@ -1,0 +1,30 @@
+{{- if .Values.emailWorker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clustersage-email-worker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.emailWorker.replicaCount }}
+  selector:
+    matchLabels: { app: clustersage-email-worker }
+  template:
+    metadata:
+      labels:
+        app: clustersage-email-worker
+{{- with .Values.podLabels }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      imagePullSecrets:
+{{ toYaml .Values.global.imagePullSecrets | indent 8 }}
+      containers:
+        - name: email-worker
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["python", "-m", "app.workers.email_worker"]
+          envFrom:
+            - configMapRef: { name: clustersage-config }
+            - secretRef: { name: clustersage-secrets }
+{{- end }}

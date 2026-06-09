@@ -1,0 +1,31 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: clustersage
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - secretName: {{ .Values.ingress.tls.secretName | quote }}
+      hosts:
+{{- range .Values.ingress.hosts }}
+        - {{ .host | quote }}
+{{- end }}
+  {{- end }}
+  rules:
+{{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+{{- range .paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ ternary "clustersage-frontend" "clustersage-backend" (eq .service "frontend") }}
+                port: { number: 80 }
+{{- end }}
+{{- end }}
+{{- end }}
