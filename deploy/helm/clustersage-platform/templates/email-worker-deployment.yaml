@@ -1,16 +1,17 @@
+{{- if .Values.emailWorker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: clusterwatch-backend
+  name: clustersage-email-worker
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.backend.replicaCount }}
+  replicas: {{ .Values.emailWorker.replicaCount }}
   selector:
-    matchLabels: { app: clusterwatch-backend }
+    matchLabels: { app: clustersage-email-worker }
   template:
     metadata:
       labels:
-        app: clusterwatch-backend
+        app: clustersage-email-worker
 {{- with .Values.podLabels }}
 {{ toYaml . | indent 8 }}
 {{- end }}
@@ -19,13 +20,11 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
       containers:
-        - name: backend
+        - name: email-worker
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
-          ports: [{ name: http, containerPort: 8000 }]
+          command: ["python", "-m", "app.workers.email_worker"]
           envFrom:
-            - configMapRef: { name: clusterwatch-config }
-            - secretRef: { name: clusterwatch-secrets }
-          readinessProbe:
-            httpGet: { path: /health, port: http }
-            initialDelaySeconds: 10
+            - configMapRef: { name: clustersage-config }
+            - secretRef: { name: clustersage-secrets }
+{{- end }}

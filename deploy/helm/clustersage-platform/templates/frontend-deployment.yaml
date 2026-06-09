@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: clusterwatch-frontend
+  name: clustersage-frontend
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:
-    matchLabels: { app: clusterwatch-frontend }
+    matchLabels: { app: clustersage-frontend }
   template:
     metadata:
-      labels: { app: clusterwatch-frontend }
+      labels: { app: clustersage-frontend }
     spec:
       imagePullSecrets:
 {{ toYaml .Values.global.imagePullSecrets | indent 8 }}
@@ -20,4 +20,4 @@ spec:
           ports: [{ name: http, containerPort: 3000 }]
           env:
             - name: NEXT_PUBLIC_API_URL
-              valueFrom: { configMapKeyRef: { name: clusterwatch-config, key: NEXT_PUBLIC_API_URL } }
+              valueFrom: { configMapKeyRef: { name: clustersage-config, key: NEXT_PUBLIC_API_URL } }

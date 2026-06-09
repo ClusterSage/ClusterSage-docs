@@ -18,6 +18,22 @@ variable "tags" {
   default = {}
 }
 
+variable "resource_name_prefix" {
+  type        = string
+  default     = null
+  description = "Optional existing Azure resource name prefix. Use only to preserve already-deployed resource names."
+}
+
+variable "application_tag" {
+  type    = string
+  default = "ClusterSage"
+}
+
+variable "environment_tag" {
+  type    = string
+  default = null
+}
+
 variable "domain_name" {
   type    = string
   default = "dev.nexaflow.site"
@@ -31,6 +47,11 @@ variable "origin_host_name" {
 variable "origin_host_header" {
   type    = string
   default = ""
+}
+
+variable "frontdoor_origin_name" {
+  type    = string
+  default = "clustersage-origin"
 }
 
 variable "frontdoor_sku_name" {
@@ -98,6 +119,11 @@ variable "postgres_server_name" {
   default = null
 }
 
+variable "postgres_database_name" {
+  type    = string
+  default = "clustersage"
+}
+
 variable "database_location" {
   type    = string
   default = null
@@ -123,6 +149,11 @@ variable "create_database" {
   default = true
 }
 
+variable "storage_container_name" {
+  type    = string
+  default = "clustersage-data"
+}
+
 variable "deploy_kubernetes" {
   type        = bool
   default     = true
@@ -146,12 +177,17 @@ variable "gateway_api_crds_url" {
 
 variable "platform_namespace" {
   type    = string
-  default = "clusterwatch"
+  default = "clustersage"
 }
 
 variable "platform_release_name" {
   type    = string
   default = "clustersage-platform"
+}
+
+variable "platform_service_account_name" {
+  type    = string
+  default = "clustersage-workloads"
 }
 
 variable "platform_gateway_name" {

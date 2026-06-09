@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: clusterwatch
+  name: clustersage
   namespace: {{ .Release.Namespace }}
 spec:
   ingressClassName: {{ .Values.ingress.className | quote }}
@@ -24,7 +24,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ ternary "clusterwatch-frontend" "clusterwatch-backend" (eq .service "frontend") }}
+                name: {{ ternary "clustersage-frontend" "clustersage-backend" (eq .service "frontend") }}
                 port: { number: 80 }
 {{- end }}
 {{- end }}

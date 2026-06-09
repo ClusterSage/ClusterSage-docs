@@ -1,0 +1,16 @@
+backend:
+  url: "https://www.nexaflow.site"
+
+auth:
+  email: "owner@example.com"
+  accessKey: "replace-with-agent-key-from-dashboard"
+
+cluster:
+  name: "customer-cluster-name"
+  provider: "aks"
+
+agent:
+  image:
+    repository: "acrkubesageprod.azurecr.io/clustersage-agent"
+    tag: "stable"
+    pullPolicy: IfNotPresent

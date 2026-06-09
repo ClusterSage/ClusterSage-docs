@@ -4,7 +4,7 @@ namespace:
   create: false
 serviceAccount:
   create: true
-  name: "clusterwatch-workloads"
+  name: "clustersage-workloads"
   annotations: {}
 podLabels: {}
 frontend:
@@ -26,7 +26,7 @@ backend:
     PUBLIC_APP_URL: ""
     PUBLIC_API_URL: ""
     CORS_ALLOWED_ORIGINS: ""
-    AZURE_STORAGE_CONTAINER: "clusterwatch-data"
+    AZURE_STORAGE_CONTAINER: "clustersage-data"
     AZURE_SERVICEBUS_FULLY_QUALIFIED_NAMESPACE: ""
     CLUSTER_CONNECTED_QUEUE_NAME: "cluster-connected"
     AZURE_COMMUNICATION_EMAIL_ENDPOINT: ""

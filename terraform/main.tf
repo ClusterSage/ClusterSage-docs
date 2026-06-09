@@ -3,14 +3,14 @@ data "azuread_client_config" "current" {}
 
 module "resource_group" {
   source   = "./modules/resource-group"
-  name     = "rg-${local.name_prefix}"
+  name     = "rg-${local.resource_name_prefix}"
   location = var.location
   tags     = local.tags
 }
 
 module "networking" {
   source                           = "./modules/networking"
-  name_prefix                      = local.name_prefix
+  name_prefix                      = local.resource_name_prefix
   resource_group_name              = module.resource_group.name
   location                         = module.resource_group.location
   address_space                    = var.vnet_address_space
@@ -22,7 +22,7 @@ module "networking" {
 
 module "managed_identity" {
   source              = "./modules/managed-identity"
-  name                = "id-${local.name_prefix}-workloads"
+  name                = "id-${local.resource_name_prefix}-workloads"
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   tags                = local.tags
@@ -30,7 +30,7 @@ module "managed_identity" {
 
 module "monitoring" {
   source              = "./modules/monitoring"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   tags                = local.tags
@@ -38,7 +38,7 @@ module "monitoring" {
 
 module "service_bus" {
   source              = "./modules/service-bus"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   queue_name          = "cluster-connected"
@@ -47,7 +47,7 @@ module "service_bus" {
 
 module "email" {
   source              = "./modules/email"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   data_location       = var.communication_data_location
   sender_display_name = var.email_sender_display_name
@@ -56,16 +56,16 @@ module "email" {
 
 module "storage" {
   source              = "./modules/storage"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
-  container_name      = "clusterwatch-data"
+  container_name      = var.storage_container_name
   tags                = local.tags
 }
 
 module "key_vault" {
   source              = "./modules/key-vault"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -88,8 +88,9 @@ module "app_hosting" {
 module "database" {
   count                  = var.create_database ? 1 : 0
   source                 = "./modules/database"
-  name_prefix            = local.name_prefix
+  name_prefix            = local.resource_name_prefix
   server_name            = var.postgres_server_name
+  database_name          = var.postgres_database_name
   resource_group_name    = module.resource_group.name
   location               = coalesce(var.database_location, module.resource_group.location)
   administrator_login    = var.postgres_admin_login
@@ -101,7 +102,7 @@ module "database" {
 
 module "waf" {
   source              = "./modules/waf"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
   resource_group_name = module.resource_group.name
   sku_name            = var.frontdoor_sku_name
   tags                = local.tags
@@ -109,7 +110,8 @@ module "waf" {
 
 module "frontdoor" {
   source              = "./modules/frontdoor"
-  name_prefix         = local.name_prefix
+  name_prefix         = local.resource_name_prefix
+  origin_name         = var.frontdoor_origin_name
   resource_group_name = module.resource_group.name
   sku_name            = var.frontdoor_sku_name
   origin_host_name    = var.origin_host_name
@@ -143,12 +145,12 @@ resource "azurerm_role_assignment" "storage_blob_contributor" {
   principal_id         = module.managed_identity.principal_id
 }
 
-resource "azurerm_federated_identity_credential" "clusterwatch_workloads" {
-  name                      = "fic-${local.name_prefix}-clusterwatch-workloads"
+resource "azurerm_federated_identity_credential" "clustersage_workloads" {
+  name                      = "fic-${local.resource_name_prefix}-${var.platform_service_account_name}"
   user_assigned_identity_id = module.managed_identity.id
   audience                  = ["api://AzureADTokenExchange"]
   issuer                    = module.app_hosting.aks_oidc_issuer_url
-  subject                   = "system:serviceaccount:clusterwatch:clusterwatch-workloads"
+  subject                   = "system:serviceaccount:${var.platform_namespace}:${var.platform_service_account_name}"
 }
 
 resource "azurerm_role_assignment" "keyvault_current_user" {

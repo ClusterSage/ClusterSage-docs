@@ -1,4 +1,5 @@
 variable "name_prefix" { type = string }
+variable "database_name" { type = string }
 variable "server_name" {
   type    = string
   default = null

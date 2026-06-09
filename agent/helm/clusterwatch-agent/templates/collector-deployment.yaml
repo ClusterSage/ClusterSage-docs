@@ -19,6 +19,10 @@ spec:
         app.kubernetes.io/component: collector
     spec:
       serviceAccountName: clusterwatch-agent
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml . | indent 8 }}
+      {{- end }}
       containers:
         - name: collector
           image: "{{ .Values.agent.image.repository }}:{{ .Values.agent.image.tag }}"

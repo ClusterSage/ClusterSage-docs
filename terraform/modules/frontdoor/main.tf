@@ -32,7 +32,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "main" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "main" {
-  name                           = "clustersage-origin"
+  name                           = var.origin_name
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.main.id
   enabled                        = true
   host_name                      = var.origin_host_name
@@ -70,6 +70,10 @@ resource "azurerm_cdn_frontdoor_route" "main" {
   cdn_frontdoor_custom_domain_ids = var.domain_name == "" ? [] : [
     azurerm_cdn_frontdoor_custom_domain.main[0].id
   ]
+
+  lifecycle {
+    ignore_changes = [cdn_frontdoor_custom_domain_ids]
+  }
 }
 
 resource "azurerm_cdn_frontdoor_security_policy" "main" {

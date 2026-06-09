@@ -1,6 +1,8 @@
 .terraform/
 .state-backups/
 .provider-downloads/
+.terraform-provider-mirror/
+.terraformrc.local
 .deploy-tmp/
 .tools/
 *.tfplan
