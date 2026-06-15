@@ -12,7 +12,7 @@ resource "azurerm_postgresql_flexible_server" "main" {
 
   lifecycle {
     ignore_changes = [zone]
-  }
+  } 
 }
 
 resource "azurerm_postgresql_flexible_server_database" "main" {
