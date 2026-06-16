@@ -1,0 +1,37 @@
+name: Docs CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate docs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          markers = ("<<<<<<<", "=======", ">>>>>>>")
+          docs = list(Path(".").rglob("*.md"))
+          if not docs:
+              raise SystemExit("No Markdown files found")
+          for path in docs:
+              text = path.read_text(encoding="utf-8")
+              if not text.strip():
+                  raise SystemExit(f"{path} is empty")
+              for marker in markers:
+                  if marker in text:
+                      raise SystemExit(f"{path} contains merge conflict marker {marker}")
+              print(f"validated {path}")
+          PY
