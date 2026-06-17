@@ -20,4 +20,4 @@ The Helm chart grants `get`, `list`, and `watch` only for pods, nodes, deploymen
 
 ## Secret Handling
 
-Backend secrets should be stored in Kubernetes Secrets, VM `.env` files with restricted permissions, or Azure Key Vault. Customer Helm values contain only the agent access key; that key can register only with the SaaS ingestion API and cannot access Blob Storage or PostgreSQL.
+Backend secrets should be stored in Azure Key Vault for AKS production workloads. The current prod direction is Workload Identity plus the Secrets Store CSI driver, with pods reading mounted Key Vault secret files and exporting them as runtime environment variables. Customer Helm values contain only the agent access key; that key can register only with the SaaS ingestion API and cannot access Blob Storage or PostgreSQL.

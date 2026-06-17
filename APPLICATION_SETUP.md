@@ -41,6 +41,15 @@ Important backend variables:
 - `EMAIL_SENDER_ADDRESS`
 - `CORS_ALLOWED_ORIGINS`
 
+## Production Secret Delivery
+
+Prod should not carry backend secrets in Git-tracked Helm values. The active prod target is Azure Key Vault plus AKS Workload Identity plus the Secrets Store CSI driver:
+
+- Key Vault stores runtime secrets such as `DATABASE_URL`, `JWT_SECRET`, `AGENT_TOKEN_SECRET`, and `AZURE_STORAGE_CONNECTION_STRING`.
+- The `clustersage-workloads` service account is annotated with the user-assigned managed identity client ID.
+- The platform chart mounts Key Vault secrets through a `SecretProviderClass`.
+- Backend, email worker, and migration pods export mounted secret files into environment variables at container start so the application code keeps the same config contract.
+
 Important frontend variables:
 
 - `NEXT_PUBLIC_API_URL`
