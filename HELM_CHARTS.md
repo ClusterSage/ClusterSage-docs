@@ -14,8 +14,8 @@ helm template clustersage-staging repos/ClusterSage-helm/charts/clustersage -n c
 helm template clustersage-prod repos/ClusterSage-helm/charts/clustersage -n clustersage -f repos/ClusterSage-helm/charts/clustersage/values-prod.yaml
 helm lint repos/ClusterSage-helm/charts/clusterwatch-agent
 helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent -f repos/ClusterSage-helm/charts/clusterwatch-agent/values.customer.example.yaml
-helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrkubesageprod.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.allowedNamespaces[0]=prod
-helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrkubesageprod.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.clusterWide=true
+helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.allowedNamespaces[0]=prod
+helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.clusterWide=true
 ```
 
 Platform deployment is performed by ArgoCD/GitOps, not by direct production Helm upgrades.

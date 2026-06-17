@@ -15,7 +15,7 @@ cluster:
   provider: "aks"
 agent:
   image:
-    repository: "acrkubesageprod.azurecr.io/clustersage-agent"
+    repository: "acrclustersage.azurecr.io/clustersage-agent"
     tag: "stable"
 ```
 
@@ -32,8 +32,8 @@ The image registry must be a real, resolvable ACR login server. If Kubernetes sh
 The ClusterSage agent image is published with anonymous pull enabled. Customer clusters do not need Docker login or Kubernetes image pull secrets for the default image.
 
 ```bash
-docker pull acrkubesageprod.azurecr.io/clustersage-agent:stable
-crictl pull acrkubesageprod.azurecr.io/clustersage-agent:stable
+docker pull acrclustersage.azurecr.io/clustersage-agent:stable
+crictl pull acrclustersage.azurecr.io/clustersage-agent:stable
 ```
 
 Use `stable` for normal installs. The image publishing workflow also pushes immutable version and commit tags for rollback/debugging.
@@ -50,7 +50,7 @@ helm upgrade --install clusterwatch-agent ./repos/ClusterSage-helm/charts/cluste
 For customer installs, use the published OCI Helm chart:
 
 ```bash
-helm upgrade --install clusterwatch-agent oci://acrkubesageprod.azurecr.io/helm/clusterwatch-agent \
+helm upgrade --install clusterwatch-agent oci://acrclustersage.azurecr.io/helm/clusterwatch-agent \
   --version 0.1.0 \
   --namespace clusterwatch-agent \
   --create-namespace \
@@ -60,11 +60,11 @@ helm upgrade --install clusterwatch-agent oci://acrkubesageprod.azurecr.io/helm/
 To correct an existing install with a bad image registry:
 
 ```bash
-helm upgrade clusterwatch-agent oci://acrkubesageprod.azurecr.io/helm/clusterwatch-agent \
+helm upgrade clusterwatch-agent oci://acrclustersage.azurecr.io/helm/clusterwatch-agent \
   --version 0.1.0 \
   --namespace clusterwatch-agent \
   --reuse-values \
-  --set agent.image.repository="acrkubesageprod.azurecr.io/clustersage-agent" \
+  --set agent.image.repository="acrclustersage.azurecr.io/clustersage-agent" \
   --set agent.image.tag="stable"
 ```
 
@@ -83,7 +83,7 @@ curl https://nexaflow.site/health
 kubectl describe pod -n clusterwatch-agent -l app.kubernetes.io/component=collector
 kubectl logs -n clusterwatch-agent -l app.kubernetes.io/component=fluent-bit
 kubectl auth can-i list pods --as system:serviceaccount:clusterwatch-agent:clusterwatch-agent --all-namespaces
-nslookup acrkubesageprod.azurecr.io
+nslookup acrclustersage.azurecr.io
 ```
 
 ## Uninstall
