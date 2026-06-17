@@ -13,6 +13,12 @@ The Alembic migration is `repos/ClusterSage-services/services/platform-api/alemb
 - `issues`: `id`, `organization_id`, `cluster_id`, Kubernetes context fields, severity, type, title, description, status, timestamps.
 - `ai_recommendations`: `id`, `organization_id`, `cluster_id`, optional `issue_id`, `recommendation_json`, `created_at`.
 - `audit_logs`: `id`, optional org/user/cluster links, action, actor type, JSON details, `created_at`.
+- `ai_log_findings`: additive Phase 1 table for pre-classified log evidence and signature grouping.
+- `ai_incidents`: additive Phase 1 table for richer pod/workload/cluster incident records, separate from the current `issues` table.
+- `remediation_suggestions`: additive Phase 1 table for AI-generated or deterministic remediation guidance.
+- `remediation_approvals`: additive Phase 1 table for explicit user approval state.
+- `remediation_actions`: additive Phase 1 table for approved executable actions such as rollout restart.
+- `ai_cluster_queries`: additive Phase 1 table for natural-language cluster query history.
 
 ## Run Migrations
 
@@ -26,6 +32,8 @@ With Docker Compose:
 ```bash
 docker compose exec backend alembic upgrade head
 ```
+
+Note: Phase 1 added `0002_ai_incidents_and_remediation.py`. The migration is additive and does not remove or rewrite any existing tables.
 
 ## Useful Checks
 
