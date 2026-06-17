@@ -288,7 +288,7 @@ Show image examples:
 clustersage-frontend
 clustersage-backend
 clustersage-agent
-clustersage-email-worker uses backend image today
+clustersage-email-worker uses its own dedicated image
 clustersage-ai-worker future/planned
 ```
 

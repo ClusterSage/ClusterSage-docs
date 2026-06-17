@@ -7,7 +7,7 @@ ClusterSage is a multi-tenant Kubernetes observability SaaS. Customers install a
 - Frontend: `repos/ClusterSage-frontend`, Next.js dashboard and auth UI.
 - Backend/API: `repos/ClusterSage-services/services/platform-api`, FastAPI, JWT auth, tenant-scoped cluster/resource/log APIs.
 - Agent: `repos/ClusterSage-services/services/collector-agent`, Python in-cluster collector plus Fluent Bit.
-- Worker: `python -m app.workers.email_worker`, consumes Service Bus messages and sends Azure Communication Services Email.
+- Worker: `repos/ClusterSage-services/services/email-worker`, standalone service that consumes Service Bus messages and sends Azure Communication Services Email.
 - Storage: PostgreSQL metadata plus private Azure Blob Storage for raw compressed logs, events, and snapshots.
 
 ## Local Development
@@ -71,8 +71,8 @@ When an agent successfully connects a cluster, the API publishes a `cluster.conn
 Run the worker locally when Service Bus and email are configured:
 
 ```bash
-cd repos/ClusterSage-services/services/platform-api
-python -m app.workers.email_worker
+cd repos/ClusterSage-services/services/email-worker
+python -m app.main
 ```
 
 ## Tests And Validation
@@ -81,7 +81,10 @@ python -m app.workers.email_worker
 cd repos/ClusterSage-frontend
 npm run build
 
-cd ../backend
+cd ../ClusterSage-services/services/platform-api
+python -m compileall app
+
+cd ../email-worker
 python -m compileall app
 ```
 

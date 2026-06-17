@@ -18,7 +18,7 @@ ClusterSage uses the customer-installed connector model. The SaaS does not conne
 4. Agent registers with `/api/agent/register` and receives `cluster_id` plus signed `agent_token`.
 5. Agent sends `/api/agent/heartbeat`, `/api/ingest/logs`, `/api/ingest/events`, and `/api/ingest/snapshot`.
 6. Backend validates the agent token, writes raw payloads to Blob Storage, writes indexes to PostgreSQL, detects basic issues, and publishes a Service Bus notification when a cluster connects.
-7. The email worker consumes cluster connection events and sends Azure Communication Services Email without blocking registration.
+7. The standalone email worker consumes cluster connection events and sends Azure Communication Services Email without blocking registration.
 
 ## Tenancy
 
