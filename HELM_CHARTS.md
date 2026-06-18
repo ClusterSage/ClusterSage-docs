@@ -4,7 +4,7 @@ Current chart paths:
 
 - Platform: `repos/ClusterSage-helm/charts/clustersage`
 - Customer agent: `repos/ClusterSage-helm/charts/clusterwatch-agent`
-- Published OCI chart version for the current customer install flow: `0.1.2`
+- Published OCI chart version for the current customer install flow: `0.1.3`
 
 Validate locally when Helm is installed:
 
@@ -17,6 +17,8 @@ helm lint repos/ClusterSage-helm/charts/clusterwatch-agent -f repos/ClusterSage-
 helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent -f repos/ClusterSage-helm/charts/clusterwatch-agent/values.customer.example.yaml
 helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.allowedNamespaces[0]=prod
 helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set remediation.enabled=true --set remediation.clusterWide=true
+helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set addons.kubeStateMetrics.enabled=true
+helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agent -n clusterwatch-agent --set backend.url=https://nexaflow.site --set auth.email=owner@example.com --set auth.accessKey=test-key --set cluster.name=test-cluster --set agent.image.repository=acrclustersage.azurecr.io/clustersage-agent --set addons.kubeStateMetrics.enabled=true --set addons.metricsServer.enabled=true
 ```
 
 Platform deployment is performed by ArgoCD/GitOps, not by direct production Helm upgrades.
@@ -49,3 +51,22 @@ The chart does not grant:
 - secrets access
 - `pods/exec`
 - workload delete permission
+
+## Agent Telemetry Add-ons
+
+The customer agent chart now has optional telemetry add-ons for the advanced dashboard path:
+
+- `addons.kubeStateMetrics.enabled=true`
+  - installs `kube-state-metrics`
+  - supplies pod phases, requests, limits, replica status, and node allocatable/capacity signals
+- `addons.metricsServer.enabled=true`
+  - installs Metrics Server only when the customer cluster does not already expose `metrics.k8s.io`
+  - supplies live pod/node CPU-memory usage
+
+The collector can combine:
+
+- `metrics.k8s.io` usage
+- `kube-state-metrics` object-state metrics
+- kubelet summary metrics via the Kubernetes API proxy
+
+Keep `addons.metricsServer.enabled=false` by default to avoid colliding with an existing cluster-managed Metrics Server install.

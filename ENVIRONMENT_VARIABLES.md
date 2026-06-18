@@ -63,8 +63,16 @@
 | `CLUSTERWATCH_CLUSTER_NAME` | yes | no | `prod-aks-01` |
 | `CLUSTERWATCH_CLUSTER_PROVIDER` | yes | no | `aks` |
 | `CLUSTERWATCH_AGENT_VERSION` | yes | no | `0.1.0` |
+| `CLUSTERWATCH_POD_NAMESPACE` | chart-set | no | `clusterwatch-agent` |
 | `CLUSTERWATCH_HEARTBEAT_INTERVAL_SECONDS` | yes | no | `30` |
 | `CLUSTERWATCH_SNAPSHOT_INTERVAL_SECONDS` | yes | no | `60` |
+| `CLUSTERWATCH_METRICS_ENABLED` | telemetry phase | no | `true` |
+| `CLUSTERWATCH_METRICS_INTERVAL_SECONDS` | telemetry phase | no | `60` |
+| `CLUSTERWATCH_METRICS_RESOURCE_USAGE_ENABLED` | telemetry phase | no | `true` |
+| `CLUSTERWATCH_METRICS_KUBE_STATE_ENABLED` | telemetry phase | no | `true` |
+| `CLUSTERWATCH_METRICS_KUBE_STATE_URL` | optional | no | `http://clusterwatch-kube-state-metrics.clusterwatch-agent.svc.cluster.local:8080/metrics` |
+| `CLUSTERWATCH_METRICS_KUBE_STATE_TIMEOUT_SECONDS` | telemetry phase | no | `10` |
+| `CLUSTERWATCH_METRICS_KUBELET_SUMMARY_ENABLED` | telemetry phase | no | `true` |
 | `CLUSTERWATCH_REMEDIATION_ENABLED` | remediation phase | no | `false` |
 | `CLUSTERWATCH_REMEDIATION_CLUSTER_WIDE` | remediation phase | no | `false` |
 | `CLUSTERWATCH_REMEDIATION_ALLOWED_NAMESPACES` | remediation phase | no | `prod,platform` |

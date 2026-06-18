@@ -25,6 +25,10 @@ Use `Authorization: Bearer <jwt>`.
 - `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}/logs`: selected pod log lines from recent log batches.
 - `GET /api/clusters/{clusterId}/issues`: detected issues.
 - `GET /api/clusters/{clusterId}/snapshots/latest`: latest snapshot index.
+- `GET /api/clusters/{clusterId}/metrics/overview`: existing latest-slice CPU/memory overview for the current dashboard.
+- `GET /api/clusters/{clusterId}/metrics/catalog`: latest-slice metrics filter catalog for nodes, namespaces, workloads, pods, metric names, and scopes.
+- `GET /api/clusters/{clusterId}/metrics/latest`: filtered latest-slice metric breakdown for a selected metric name.
+- `GET /api/clusters/{clusterId}/metrics/timeseries`: historical filtered timeseries for a selected metric name and window.
 - `GET /api/clusters/{clusterId}/limits`: list alert limit definitions for the selected cluster.
 - `POST /api/clusters/{clusterId}/limits`: create a cluster alert limit definition.
 - `PATCH /api/clusters/{clusterId}/limits/{limitId}`: update a cluster alert limit definition.
@@ -48,3 +52,4 @@ Current note:
 - `POST /api/ingest/logs`: agent-token protected log ingestion, supports gzip request body.
 - `POST /api/ingest/events`: agent-token protected event ingestion, supports gzip request body.
 - `POST /api/ingest/snapshot`: agent-token protected snapshot ingestion, supports gzip request body.
+- `POST /api/ingest/metrics`: agent-token protected metrics ingestion for usage, object-state, requests/limits, and sampled node/pod telemetry.

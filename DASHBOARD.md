@@ -62,6 +62,19 @@ These are sourced from:
 
 - `GET /api/clusters/{clusterId}/metrics/overview`
 
+Backend Phase 2 query surfaces now also exist for the next-generation technical dashboard:
+
+- `GET /api/clusters/{clusterId}/metrics/catalog`
+- `GET /api/clusters/{clusterId}/metrics/latest`
+- `GET /api/clusters/{clusterId}/metrics/timeseries`
+
+These are intended for:
+
+- filter dropdown population
+- filtered top-panel summaries
+- historical line and bar charts
+- namespace/node/workload/pod drilldowns
+
 ## Metrics Still Not Fully Supported Yet
 
 The dashboard still does **not** currently have:
@@ -82,6 +95,10 @@ Phase 2 backend and agent groundwork now exists for runtime metrics:
 - backend ingest at `POST /api/ingest/metrics`
 - backend overview read path at `GET /api/clusters/{clusterId}/metrics/overview`
 - additive storage in `cluster_metric_samples`
+- additive metrics query surfaces at:
+  - `GET /api/clusters/{clusterId}/metrics/catalog`
+  - `GET /api/clusters/{clusterId}/metrics/latest`
+  - `GET /api/clusters/{clusterId}/metrics/timeseries`
 
 The runtime panels only become active once:
 
@@ -114,4 +131,33 @@ That panel is still valid as an inventory/status view, but `pod_status` is not a
 - Alert limit CRUD and persistence
 - backend limit evaluation
 - email notifications
-- optional CPU/memory telemetry, only after agent/backend support is intentionally added
+- richer telemetry-backed technical dashboard rollout:
+  - chart-managed `kube-state-metrics`
+  - optional chart-managed `metrics-server`
+  - collector scraping of object-state metrics, requests/limits, kubelet summary, and live usage
+  - backend historical/query APIs for Grafana-style cluster views
+
+## Advanced Technical Dashboard
+
+The cluster dashboard is now moving toward a denser Grafana-style operations surface.
+
+Current frontend implementation now uses:
+
+- `GET /api/clusters/{clusterId}/metrics/catalog`
+- `GET /api/clusters/{clusterId}/metrics/latest`
+- `GET /api/clusters/{clusterId}/metrics/timeseries`
+- existing snapshot and incident APIs
+
+Current technical dashboard behaviors:
+
+- node / namespace / workload / pod filter bar
+- CPU, memory, and network time-series panels backed by real data only
+- requests and limits breakdown panels backed by `kube-state-metrics`
+- namespace status table backed by snapshot + incident data
+- workload health table backed by snapshot + incident data
+
+Important truthfulness constraints:
+
+- workload filtering is only applied to panels whose real backend data can support it
+- pod and node metrics are not falsely remapped into workload scope when that correlation is not actually stored
+- no panel renders fabricated values when telemetry is absent
