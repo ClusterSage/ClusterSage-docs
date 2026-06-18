@@ -37,6 +37,8 @@
 | `AZURE_CLIENT_ID` | hosted backend | no | `<managed-identity-client-id>` | workload identity / managed identity, typically the same client ID used in the service account annotation |
 | `AI_ANALYSIS_ENABLED` | AI phase | no | `false` | feature flag |
 | `AI_CLUSTER_QUERY_ENABLED` | AI phase | no | `false` | feature flag |
+| `ALERT_EVALUATION_ENABLED` | alerting phase | no | `false` | enables backend alert evaluation loop |
+| `ALERT_EVALUATION_INTERVAL_SECONDS` | alerting phase | no | `60` | background alert evaluation interval |
 | `REMEDIATION_APPROVAL_ENABLED` | remediation phase | no | `true` | feature flag |
 | `AGENT_REMEDIATION_ENABLED` | remediation phase | no | `false` | feature flag |
 | `AI_MAX_LOG_LINES_PER_ANALYSIS` | AI phase | no | `200` | prompt guardrail |

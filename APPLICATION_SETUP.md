@@ -77,6 +77,8 @@ The frontend has a refresh cooldown. The backend also enforces endpoint-aware ra
 
 When an agent successfully connects a cluster, the API publishes a `cluster.connected` message to Azure Service Bus. The email worker consumes the message and sends a confirmation email through Azure Communication Services Email. Failures are logged and audited without breaking cluster registration.
 
+When alert evaluation is enabled, the platform API also evaluates stored alert-limit definitions on a background interval. Matching breaches create `alert_events` rows and queue `alert.limit_triggered` notification messages through the same Service Bus/email-worker path.
+
 Run the worker locally when Service Bus and email are configured:
 
 ```bash

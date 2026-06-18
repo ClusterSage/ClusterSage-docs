@@ -19,6 +19,8 @@ The Alembic migration is `repos/ClusterSage-services/services/platform-api/alemb
 - `remediation_approvals`: additive Phase 1 table for explicit user approval state.
 - `remediation_actions`: additive Phase 1 table for approved executable actions such as rollout restart.
 - `ai_cluster_queries`: additive Phase 1 table for natural-language cluster query history.
+- `alert_limits`: additive Phase 3 table for cluster-scoped alert threshold definitions, notification target settings, cooldown, and enabled/disabled state.
+- `alert_events`: additive Phase 3 table for alert trigger history and notification-send outcome tracking.
 
 ## Run Migrations
 
@@ -33,7 +35,7 @@ With Docker Compose:
 docker compose exec backend alembic upgrade head
 ```
 
-Note: Phase 1 added `0002_ai_incidents_and_remediation.py`. The migration is additive and does not remove or rewrite any existing tables.
+Note: Phase 1 added `0002_ai_incidents_and_remediation.py`. Phase 3 added `0003_alert_limits.py`. These migrations are additive and do not remove or rewrite existing tables.
 
 ## Useful Checks
 
