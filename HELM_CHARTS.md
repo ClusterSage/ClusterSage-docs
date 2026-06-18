@@ -4,6 +4,7 @@ Current chart paths:
 
 - Platform: `repos/ClusterSage-helm/charts/clustersage`
 - Customer agent: `repos/ClusterSage-helm/charts/clusterwatch-agent`
+- Published OCI chart version for the current customer install flow: `0.1.1`
 
 Validate locally when Helm is installed:
 
