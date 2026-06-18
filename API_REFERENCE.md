@@ -18,6 +18,7 @@ Use `Authorization: Bearer <jwt>`.
 - `DELETE /api/agent-keys/{keyId}`: revoke an agent key.
 - `GET /api/clusters`: list organization clusters.
 - `GET /api/clusters/{clusterId}`: cluster details.
+- `DELETE /api/clusters/{clusterId}`: permanently remove a connected cluster and delete its associated database records for that cluster.
 - `GET /api/clusters/{clusterId}/logs`: log batch indexes.
 - `GET /api/clusters/{clusterId}/resources`: tenant-scoped resources from the latest cluster snapshot.
 - `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}`: selected resource details.

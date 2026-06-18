@@ -2,6 +2,26 @@
 
 The customer-installed agent runs inside the customer cluster and only connects outbound to the ClusterSage backend.
 
+## Metrics Server Requirement For Runtime Metrics
+
+ClusterSage can now ingest pod and node CPU/memory usage through the Kubernetes Metrics API, but that data only exists if the customer cluster has Metrics Server installed and healthy.
+
+If Metrics Server is missing:
+
+- the agent still installs and runs
+- logs, snapshots, incidents, and AI features continue to work
+- runtime CPU/memory metrics are skipped gracefully
+- future dashboard runtime charts will remain unavailable
+
+Quick verification:
+
+```bash
+kubectl top pods -A
+kubectl top nodes
+```
+
+If those commands fail, the cluster does not currently expose the Metrics API the agent needs.
+
 ## Required Values
 
 ```yaml
@@ -17,6 +37,9 @@ agent:
   image:
     repository: "acrclustersage.azurecr.io/clustersage-agent"
     tag: "stable"
+  metrics:
+    enabled: true
+    intervalSeconds: 60
 ```
 
 - `backend.url`: public SaaS API URL.
@@ -24,6 +47,8 @@ agent:
 - `auth.accessKey`: one-time agent key generated in dashboard.
 - `cluster.name`: display name and unique cluster name within the organization.
 - `agent.image.repository`: collector image registry/repository.
+- `agent.metrics.enabled`: enables read-only Metrics API polling for pod/node CPU and memory samples.
+- `agent.metrics.intervalSeconds`: frequency for metrics collection.
 
 The image registry must be a real, resolvable ACR login server. If Kubernetes shows `lookup <registry>.azurecr.io ... no such host`, the registry hostname in the values file is wrong or the customer cluster cannot resolve public DNS.
 

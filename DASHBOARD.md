@@ -45,9 +45,26 @@ These provide:
 - Resources by kind
 - Recent incident activity
 
-## Metrics Not Supported Yet
+## Runtime Metrics Now Shown When Available
 
-The dashboard does **not** currently have:
+The dashboard can now render runtime CPU and memory panels when the cluster is successfully sending Metrics API samples through the agent and backend.
+
+Current runtime panels:
+
+- total pod CPU usage
+- total pod memory usage
+- top pods by CPU
+- top nodes by CPU
+- top pods by memory
+- top nodes by memory
+
+These are sourced from:
+
+- `GET /api/clusters/{clusterId}/metrics/overview`
+
+## Metrics Still Not Fully Supported Yet
+
+The dashboard still does **not** currently have:
 
 - CPU usage metrics
 - memory usage metrics
@@ -55,7 +72,22 @@ The dashboard does **not** currently have:
 - Prometheus time-series data
 - backend-stored resource usage history
 
-Because those metrics do not exist in the current agent/backend pipeline, the dashboard shows explicit unavailable states instead of fake charts.
+When runtime metrics are unavailable for a cluster, the dashboard shows explicit unavailable states instead of fake charts.
+
+## Runtime Metrics Groundwork
+
+Phase 2 backend and agent groundwork now exists for runtime metrics:
+
+- agent-side read-only polling of the Kubernetes Metrics API
+- backend ingest at `POST /api/ingest/metrics`
+- backend overview read path at `GET /api/clusters/{clusterId}/metrics/overview`
+- additive storage in `cluster_metric_samples`
+
+The runtime panels only become active once:
+
+- the customer cluster has Metrics Server available
+- the agent is collecting metrics successfully
+- the backend overview endpoint is returning real data for that cluster
 
 ## Limits Integration
 
