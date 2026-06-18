@@ -50,8 +50,8 @@ helm upgrade --install clusterwatch-agent ./repos/ClusterSage-helm/charts/cluste
 For customer installs, use the published OCI Helm chart:
 
 ```bash
-helm upgrade --install clusterwatch-agent oci://acrclustersage.azurecr.io/clusterwatch-agent \
-  --version 0.1.1 \
+helm upgrade --install clusterwatch-agent oci://acrclustersage.azurecr.io/helm/clusterwatch-agent \
+  --version 0.1.2 \
   --namespace clusterwatch-agent \
   --create-namespace \
   -f clusterwatch-values.yaml
@@ -60,8 +60,8 @@ helm upgrade --install clusterwatch-agent oci://acrclustersage.azurecr.io/cluste
 To correct an existing install with a bad image registry:
 
 ```bash
-helm upgrade clusterwatch-agent oci://acrclustersage.azurecr.io/clusterwatch-agent \
-  --version 0.1.1 \
+helm upgrade clusterwatch-agent oci://acrclustersage.azurecr.io/helm/clusterwatch-agent \
+  --version 0.1.2 \
   --namespace clusterwatch-agent \
   --reuse-values \
   --set agent.image.repository="acrclustersage.azurecr.io/clustersage-agent" \
