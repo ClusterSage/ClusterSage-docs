@@ -10,7 +10,7 @@ ClusterSage uses an immutable-image GitOps flow:
 4. The workflow updates the dev GitOps values file with both the readable tag and the immutable digest.
 5. ArgoCD dev auto-sync applies the dev values change.
 6. Staging promotion copies the exact repository, tag, and digest from dev into staging.
-7. Production promotion copies the exact repository, tag, and digest from staging into prod.
+7. Production promotion reads only from staging, creates a semantic release tag such as `v1.0.0` on that exact digest in ACR, and writes the release tag plus the same digest into prod.
 
 This keeps staging and prod on the same artifact that was already built and published earlier.
 
@@ -55,7 +55,7 @@ The platform chart renders images this way:
 - if `digest` is present: `repository@digest`
 - otherwise: `repository:tag`
 
-That means GitOps promotion can rely on the digest as the deployment source of truth while keeping a readable tag in Git.
+That means GitOps promotion can rely on the digest as the deployment source of truth while keeping a readable tag in Git. In prod, that readable tag is a human release label such as `v1.0.0`.
 
 ## Pull Request Validation
 
@@ -106,7 +106,7 @@ Behavior:
 
 - validates frontend
 - logs into Azure using GitHub OIDC
-- pushes image to ACR with the 7-character commit SHA tag
+- pushes image to ACR with the automatic short SHA tag
 - captures the pushed digest from `docker/build-push-action`
 - updates `ClusterSage-gitops/environments/dev/values/clustersage-values.yaml`
 - commits only that values-file change
@@ -192,16 +192,27 @@ Workflow:
 Behavior:
 
 - manual `workflow_dispatch`
-- requires a typed confirmation input with the exact value `promote-to-prod`
-- reads repository, tag, and digest from:
+- requires a `release_version` input in the exact format `vMAJOR.MINOR.PATCH`
+- examples allowed:
+  - `v1.0.0`
+  - `v1.2.3`
+  - `v2.10.4`
+- reads repository, current staging tag, and digest only from:
   - `environments/staging/values/clustersage-values.yaml`
-- validates that digest exists and matches `sha256:...`
-- copies the same values into:
+- fails if the staging values file is missing
+- fails if the staging digest is missing or not in `sha256:...` format
+- fails if the release version does not match the semantic version format
+- logs into Azure using GitHub OIDC
+- creates the production release tag in ACR against the exact staged digest without rebuilding the image
+- writes the prod values so:
+  - `tag` becomes the semantic release label like `v1.0.0`
+  - `digest` stays the exact staged digest
+- copies the same repository plus the new release tag and existing digest into:
   - `environments/prod/values/clustersage-values.yaml`
 - creates a GitOps promotion branch and opens a PR to `main`
 - deployment happens only after that PR is reviewed and merged
 
-No rebuild happens in prod promotion.
+No rebuild happens in prod promotion. Prod can only promote from staging, never directly from dev or `main`.
 
 ## ArgoCD Behavior
 
@@ -235,7 +246,7 @@ git revert <commit-sha>
 git push origin main
 ```
 
-For prod, rollback should restore a previous known-good digest in:
+For prod, rollback should restore a previous known-good version tag and digest pair in:
 
 - `repos/ClusterSage-gitops/environments/prod/values/clustersage-values.yaml`
 
@@ -275,6 +286,18 @@ No Kubernetes credentials are needed by these workflows because deployment happe
 
 The source environment values file was not updated by a successful main-branch image publish yet, or a previous manual edit removed the digest field.
 
+### Production workflow says release version is invalid
+
+The supplied `release_version` must exactly match:
+
+- `vMAJOR.MINOR.PATCH`
+
+Examples:
+
+- `v1.0.0`
+- `v1.2.3`
+- `v2.10.4`
+
 ### Build workflow pushes image but GitOps file does not change
 
 Check:
@@ -295,7 +318,8 @@ This version avoids GitHub Environments completely while keeping promotions deli
 - promotions are still manual
 - staging can only promote what is already in dev
 - prod can only promote what is already in staging
-- the operator must type an exact confirmation phrase before the workflow proceeds
+- the operator must provide an exact semantic release label before prod promotion proceeds
 - the workflow opens a GitOps PR instead of pushing directly to `main`
 - normal GitHub PR review and branch protection can be used as the approval gate
 - the deployed artifact is still pinned by digest, so no environment rebuild drift is introduced
+- the prod version tag is only a human release label; the digest remains the immutable deployed artifact
