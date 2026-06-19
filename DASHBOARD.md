@@ -161,3 +161,235 @@ Important truthfulness constraints:
 - workload filtering is only applied to panels whose real backend data can support it
 - pod and node metrics are not falsely remapped into workload scope when that correlation is not actually stored
 - no panel renders fabricated values when telemetry is absent
+
+## Dashboard Foundation Refresh
+
+Phase 1 of the current focused visual refactor updated the shared dashboard presentation layer without changing dashboard data sources or backend behavior.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/ClusterShell.tsx`
+- `repos/ClusterSage-frontend/src/components/clusters/dashboard/DashboardMetricCard.tsx`
+- `repos/ClusterSage-frontend/src/components/clusters/dashboard/DashboardPanel.tsx`
+- `repos/ClusterSage-frontend/src/components/clusters/dashboard/DashboardUnavailableState.tsx`
+- `repos/ClusterSage-frontend/src/app/globals.css`
+
+Implemented in this phase:
+
+- tighter light/dark dashboard surface tokens
+- calmer cluster shell chrome
+- icon-led cluster sidebar navigation
+- shared metric-card trend framing
+- explicit unavailable trend placeholder when no historical sparkline data exists
+- reusable unavailable state primitive for later dashboard panels
+
+Not changed in this phase:
+
+- route structure
+- API contracts
+- query keys
+- organization or cluster scoping
+- alert-limit backend behavior
+- metrics aggregation logic
+- incident or AI insight logic
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
+
+## Phase 2 Top-Surface Refresh
+
+The current dashboard header and summary strip were tightened to better match the intended premium operations-console feel without changing backend behavior.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/clusters/ClusterDashboardView.tsx`
+
+Implemented in this phase:
+
+- denser overview header with:
+  - cluster connection-state pill
+  - snapshot/telemetry status pill
+  - existing time-range selector
+  - existing refresh control
+- five-card summary row now aligned to:
+  - `Cluster status`
+  - `Nodes`
+  - `Workloads`
+  - `Incidents`
+  - `Alerts`
+- the `Alerts` card now uses the real backend alert-event feed:
+  - `GET /api/clusters/{clusterId}/alert-events`
+- alert sparkline activity is derived only from real `triggered_at` values inside the selected time window
+- incident sparkline activity still derives from real incident timestamps
+- cluster and workload cards stay honest snapshot summaries and do not fake historical trend lines when the backend does not expose them
+
+Not changed in this phase:
+
+- backend alert evaluation behavior
+- metrics ingestion behavior
+- limits CRUD behavior
+- cluster-shell routing
+- lower technical panels
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
+
+## Phase 3 Middle-Row Refresh
+
+The dashboard middle row was reworked to read more like a real observability surface while still staying fully tied to existing data.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/clusters/ClusterDashboardView.tsx`
+- `repos/ClusterSage-frontend/src/components/clusters/dashboard/DashboardUnavailableState.tsx`
+
+Implemented in this phase:
+
+- `Cluster health` panel now uses:
+  - denser internal health rows
+  - supporting stat tiles for pods, incidents, and critical incidents
+  - truthful empty-state handling when no pod snapshot exists
+- `Recent incidents` panel now uses:
+  - summary tiles for open / critical / major counts
+  - denser incident rows with severity, type, status, recency, and occurrence count
+- `AI insights` panel now uses:
+  - summary tiles for visible insights and severity mix
+  - denser AI summary cards with severity context and insight tags
+  - truthful empty-state handling when no incident rows contain `ai_summary`
+
+Truthfulness constraints preserved:
+
+- cluster health is still derived from real pod states plus open major/critical incidents
+- recent incidents still come only from existing incident rows already fetched for the dashboard
+- AI insights still render only records that already have a real `ai_summary`
+- no synthetic cluster-wide AI advice was added
+
+Not changed in this phase:
+
+- backend APIs
+- incident evaluation logic
+- AI generation logic
+- route structure
+- lower telemetry panels
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
+
+## Phase 4 Lower Technical Surface Refresh
+
+The lower half of the dashboard was reorganized so it reads like a stacked technical workspace instead of a separate utilitarian block under a more polished top section.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/clusters/ClusterDashboardView.tsx`
+
+Implemented in this phase:
+
+- `Technical telemetry` now uses:
+  - a framed parent section surface
+  - compact runtime summary tiles ahead of the charts
+  - stronger hierarchy for:
+    - CPU, memory, and network line panels
+    - current runtime totals
+    - request and limit breakdown panels
+- `Hot spots and workload shape` now uses:
+  - a framed parent section surface
+  - compact snapshot/distribution summary tiles
+  - stronger hierarchy for:
+    - namespace status
+    - workload health
+    - top pod/node consumer lists
+- child panels now use more consistent eyebrow labeling so the whole lower half feels like one observability system
+
+Truthfulness constraints preserved:
+
+- no new backend APIs were introduced
+- runtime and distribution panels still render only from the existing telemetry, snapshot, and incident data already available
+- absent telemetry still results in empty or unavailable states rather than fabricated values
+
+Not changed in this phase:
+
+- backend metrics aggregation
+- route structure
+- alert-limit backend behavior
+- incident or AI generation logic
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
+
+## Phase 5 Cross-Screen Consistency Pass
+
+The final pass aligned the rest of the cluster-facing screens with the new dashboard surface language so the workspace feels like one product instead of a polished dashboard next to older operational pages.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/clusters/ClusterWorkspaceView.tsx`
+- `repos/ClusterSage-frontend/src/components/clusters/ClusterLimitsView.tsx`
+- `repos/ClusterSage-frontend/src/app/dashboard/clusters/[clusterId]/resources/[kind]/[namespace]/[name]/page.tsx`
+
+Implemented in this phase:
+
+- resources view now uses the same denser metric-card and panel framing as the dashboard
+- incidents view now uses tighter summary cards and shared surface treatment for filter/help rows
+- ClusterSage AI view now uses the same card/panel hierarchy for supported intents and result output
+- limits view now uses the shared metric-card and panel treatment for top summaries and main work areas
+- resource detail now uses the same surface language for:
+  - summary cards
+  - metadata/runtime blocks
+  - logs
+  - incident detail side content
+  - AI suggestion cards
+
+Not changed in this phase:
+
+- backend APIs
+- remediation approval behavior
+- alert-limit logic
+- route structure
+- data semantics
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
+
+## Phase 6 Shared Shell Polish
+
+The final chrome pass tightened the shared shells around the cluster workspace and onboarding workspace so the navigation and top bars no longer feel bulkier than the content surfaces.
+
+Files involved:
+
+- `repos/ClusterSage-frontend/src/components/ClusterShell.tsx`
+- `repos/ClusterSage-frontend/src/components/DashboardShell.tsx`
+
+Implemented in this phase:
+
+- cluster shell:
+  - shorter AI nav label
+  - denser current-cluster card
+  - slightly tighter sidebar width
+  - smaller top bar and a more minimal back control
+- onboarding shell:
+  - icon-led nav treatment to better match the cluster shell
+  - tighter sidebar width
+  - smaller top bar heading treatment
+
+Not changed in this phase:
+
+- page routes
+- auth behavior
+- backend APIs
+- dashboard data behavior
+
+Validation completed:
+
+- `npm run lint`
+- `npm run build`
