@@ -10,7 +10,7 @@ ClusterSage uses an immutable-image GitOps flow:
 4. The workflow updates the dev GitOps values file with both the readable tag and the immutable digest.
 5. ArgoCD dev auto-sync applies the dev values change.
 6. Staging promotion copies the exact repository, tag, and digest from dev into staging.
-7. Production promotion reads only from staging, creates a semantic release tag such as `v1.0.0` on that exact digest in ACR, and writes the release tag plus the same digest into prod.
+7. Production promotion reads only from staging, pulls the exact staged digest, pushes a semantic release tag such as `v1.0.0` to the same image, and writes the release tag plus the same digest into prod.
 
 This keeps staging and prod on the same artifact that was already built and published earlier.
 
@@ -203,7 +203,9 @@ Behavior:
 - fails if the staging digest is missing or not in `sha256:...` format
 - fails if the release version does not match the semantic version format
 - logs into Azure using GitHub OIDC
-- creates the production release tag in ACR against the exact staged digest without rebuilding the image
+- logs into ACR
+- pulls the exact staged image by digest
+- pushes the semantic production release tag to that same image without rebuilding it
 - writes the prod values so:
   - `tag` becomes the semantic release label like `v1.0.0`
   - `digest` stays the exact staged digest
@@ -213,6 +215,11 @@ Behavior:
 - deployment happens only after that PR is reviewed and merged
 
 No rebuild happens in prod promotion. Prod can only promote from staging, never directly from dev or `main`.
+
+Important prerequisite:
+
+- the staging values file must already contain a real image digest from a successful dev-to-staging promotion
+- placeholder staging tags or empty staging digests will cause prod promotion to fail by design
 
 ## ArgoCD Behavior
 
