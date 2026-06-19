@@ -19,7 +19,7 @@ This keeps staging and prod on the same artifact that was already built and publ
 - `ClusterSage-frontend`: frontend app validation and image publish
 - `ClusterSage-services`: platform API, email worker, and collector agent validation and image publish
 - `ClusterSage-helm`: digest-aware image rendering
-- `ClusterSage-gitops`: environment values and promotion workflows
+- `ClusterSage-gitops`: environment values targeted by promotion pull requests
 
 ## What Gets Promoted
 
@@ -77,16 +77,17 @@ Runs:
 
 ### Services
 
-Workflow:
+Workflows:
 
-- `repos/ClusterSage-services/.github/workflows/pr-validation.yml`
+- `repos/ClusterSage-services/.github/workflows/pr-validation-platform-api.yml`
+- `repos/ClusterSage-services/.github/workflows/pr-validation-email-worker.yml`
+- `repos/ClusterSage-services/.github/workflows/pr-validation-collector-agent.yml`
 
 Runs:
 
 - dependency install per service
 - `python -m compileall app`
 - `pytest` where tests exist
-- offline Alembic SQL rendering for `platform-api`
 - Docker build validation for each service
 - SonarQube scan
 - Snyk dependency scan
@@ -98,6 +99,8 @@ Runs:
 Workflow:
 
 - `repos/ClusterSage-frontend/.github/workflows/publish-image.yml`
+- `repos/ClusterSage-frontend/.github/workflows/promote-staging.yml`
+- `repos/ClusterSage-frontend/.github/workflows/promote-prod.yml`
 
 Behavior:
 
@@ -110,9 +113,12 @@ Behavior:
 
 ### Platform API
 
-Workflow:
+Workflows:
 
+- `repos/ClusterSage-services/.github/workflows/pr-validation-platform-api.yml`
 - `repos/ClusterSage-services/.github/workflows/publish-platform-api.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-staging-platform-api.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-prod-platform-api.yml`
 
 Behavior:
 
@@ -124,9 +130,12 @@ Behavior:
 
 ### Email Worker
 
-Workflow:
+Workflows:
 
+- `repos/ClusterSage-services/.github/workflows/pr-validation-email-worker.yml`
 - `repos/ClusterSage-services/.github/workflows/publish-email-worker.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-staging-email-worker.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-prod-email-worker.yml`
 
 Behavior:
 
@@ -137,8 +146,9 @@ Behavior:
 
 ### Collector Agent
 
-Workflow:
+Workflows:
 
+- `repos/ClusterSage-services/.github/workflows/pr-validation-collector-agent.yml`
 - `repos/ClusterSage-services/.github/workflows/publish-collector-agent.yml`
 
 Behavior:
@@ -147,13 +157,15 @@ Behavior:
 - pushes the agent image
 - keeps the current customer-facing `stable` tag in addition to the immutable SHA tag
 
-The collector agent does not update platform GitOps values.
+The collector agent does not update platform GitOps values and does not have staging/prod promotion workflows because there is no environment-specific ArgoCD values target for it in this repository.
 
 ## Staging Promotion Flow
 
 Workflow:
 
-- `repos/ClusterSage-gitops/.github/workflows/promote-staging.yml`
+- `repos/ClusterSage-frontend/.github/workflows/promote-staging.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-staging-platform-api.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-staging-email-worker.yml`
 
 Behavior:
 
@@ -173,7 +185,9 @@ No rebuild happens in staging promotion.
 
 Workflow:
 
-- `repos/ClusterSage-gitops/.github/workflows/promote-prod.yml`
+- `repos/ClusterSage-frontend/.github/workflows/promote-prod.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-prod-platform-api.yml`
+- `repos/ClusterSage-services/.github/workflows/promote-prod-email-worker.yml`
 
 Behavior:
 
