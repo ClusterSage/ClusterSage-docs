@@ -255,6 +255,7 @@ For prod, rollback should restore a previous known-good version tag and digest p
 - `AZURE_CLIENT_ID`
 - `AZURE_TENANT_ID`
 - `AZURE_SUBSCRIPTION_ID`
+- `ACR_SUBSCRIPTION_ID` if the shared ACR lives in a different subscription than the default Azure login context
 - `ACR_NAME`
 - `ACR_LOGIN_SERVER`
 - `ACR_FRONTEND_REPOSITORY`
@@ -267,6 +268,7 @@ For prod, rollback should restore a previous known-good version tag and digest p
 - `AZURE_CLIENT_ID` if you keep Azure identity values in secrets instead of variables
 - `AZURE_TENANT_ID` if you keep Azure identity values in secrets instead of variables
 - `AZURE_SUBSCRIPTION_ID` if you keep Azure identity values in secrets instead of variables
+- `ACR_SUBSCRIPTION_ID` if your ACR is not in the same subscription used by default Azure login
 - `GITOPS_REPO_TOKEN`
 - `SONAR_TOKEN`
 - `SONAR_HOST_URL`
