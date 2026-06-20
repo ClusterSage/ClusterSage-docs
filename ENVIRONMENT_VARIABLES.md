@@ -1,5 +1,15 @@
 # Environment Variables
 
+## Environment URL Contract
+
+| Environment | Public app/API host | Frontend API host | Agent backend host |
+|---|---|---|---|
+| `dev` | `https://dev.nexaflow.site` | `https://dev.nexaflow.site` | `https://dev.nexaflow.site` |
+| `staging` | `https://stage.nexaflow.site` | `https://stage.nexaflow.site` | `https://stage.nexaflow.site` |
+| `prod` | `https://nexaflow.site` | `https://nexaflow.site` | `https://nexaflow.site` |
+
+These values are environment-specific. The examples below use production values unless a row explicitly says otherwise.
+
 ## Backend
 
 | Variable | Required | Secret | Example | Azure source |

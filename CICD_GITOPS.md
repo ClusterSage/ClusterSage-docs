@@ -229,11 +229,17 @@ Current application/value wiring:
 - staging application uses `values-staging.yaml` plus `environments/staging/values/clustersage-values.yaml`
 - prod application uses `values-prod.yaml` plus `environments/prod/values/clustersage-values.yaml`
 
-Current sync posture preserved:
+Current sync posture:
 
-- dev: auto-sync enabled
-- staging: no automated sync block currently defined in the manifest
-- prod: automated sync currently enabled and preserved as-is
+- dev: auto-sync enabled with `prune`, `selfHeal`, and `allowEmpty: false`
+- staging: auto-sync enabled with `prune`, `selfHeal`, and `allowEmpty: false`
+- prod: auto-sync enabled with `prune`, `selfHeal`, and `allowEmpty: false`
+
+This does not bypass promotion control:
+
+- dev still updates from main-branch publish workflows
+- staging still deploys only after a promotion PR is reviewed and merged
+- prod still deploys only after a promotion PR is reviewed and merged
 
 ## Rollback
 
