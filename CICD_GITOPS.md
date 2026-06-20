@@ -91,6 +91,7 @@ Runs:
 - Docker build validation for each service
 - SonarQube scan
 - Snyk dependency scan
+- image publish workflows also run a Trivy image scan after push; that step is non-blocking and workflow execution continues even if the scan step reports vulnerabilities or the scan action itself fails
 
 ## Dev Deployment Flow
 
@@ -108,6 +109,7 @@ Behavior:
 - logs into Azure using GitHub OIDC
 - pushes image to ACR with the automatic short SHA tag
 - captures the pushed digest from `docker/build-push-action`
+- runs a non-blocking Trivy scan against the pushed digest before updating GitOps
 - updates `ClusterSage-gitops/environments/dev/values/clustersage-values.yaml`
 - commits only that values-file change
 
@@ -125,6 +127,7 @@ Behavior:
 - validates platform API
 - pushes backend image to ACR
 - captures digest
+- runs a non-blocking Trivy scan against the pushed digest before updating GitOps
 - updates dev backend image fields
 - updates dev migration job image fields to the same artifact
 
@@ -142,6 +145,7 @@ Behavior:
 - validates email worker
 - pushes image to ACR
 - captures digest
+- runs a non-blocking Trivy scan against the pushed digest before updating GitOps
 - updates dev email worker image fields
 
 ### Collector Agent
@@ -155,6 +159,7 @@ Behavior:
 
 - validates collector agent
 - pushes the agent image
+- runs a non-blocking Trivy scan against the pushed digest after push
 - keeps the current customer-facing `stable` tag in addition to the immutable SHA tag
 
 The collector agent does not update platform GitOps values and does not have staging/prod promotion workflows because there is no environment-specific ArgoCD values target for it in this repository.

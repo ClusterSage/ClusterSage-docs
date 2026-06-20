@@ -26,6 +26,12 @@ docker compose up --build
 docker compose exec backend alembic upgrade head
 ```
 
+## Container Images
+
+- Frontend, platform API, email worker, and collector agent images are built from multi-stage Dockerfiles.
+- All runtime stages run as non-root users.
+- The frontend runtime uses Next.js standalone output, while the Python services copy a prebuilt virtual environment from the builder stage into a slim runtime stage.
+
 ## Environment Variables
 
 Important backend variables:
