@@ -23,6 +23,27 @@ helm template clusterwatch-agent repos/ClusterSage-helm/charts/clusterwatch-agen
 
 Platform deployment is performed by ArgoCD/GitOps, not by direct production Helm upgrades.
 
+## Platform Runtime Controls
+
+The `clustersage` platform chart now supports environment-specific runtime controls for the app workloads:
+
+- frontend HorizontalPodAutoscaler support
+- explicit frontend and backend readiness, liveness, and startup probes
+- per-workload CPU and memory requests/limits
+- environment-specific replica counts for frontend, backend, and email worker
+
+Current desired-state defaults introduced for the dev/prod rollout work:
+
+- frontend and backend probes use `/health`
+- frontend HPA can be enabled per environment with a minimum replica floor
+- the current resource baseline for platform workloads is:
+  - CPU request `100m`
+  - CPU limit `500m`
+  - memory request `128Mi`
+  - memory limit `512Mi`
+
+The email worker currently receives the same resource requests/limits, but it still does not expose an HTTP health endpoint through the platform chart.
+
 ## Agent Remediation RBAC
 
 The customer agent chart now supports optional remediation permissions.
