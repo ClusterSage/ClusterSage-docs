@@ -20,7 +20,11 @@ ClusterSage uses the customer-installed connector model. The SaaS does not conne
 4. Agent registers with `/api/agent/register` and receives `cluster_id` plus signed `agent_token`.
 5. Agent sends `/api/agent/heartbeat`, `/api/ingest/logs`, `/api/ingest/events`, and `/api/ingest/snapshot`.
 6. Backend validates the agent token, writes raw payloads to Blob Storage, writes indexes to PostgreSQL, detects basic issues, and publishes a Service Bus notification when a cluster connects.
-7. Users can review cluster-wide incidents from `/api/clusters/{clusterId}/incidents` and ask supported natural-language cluster questions through `/api/clusters/{clusterId}/ai/query`; the backend parses those requests into a strict internal DSL instead of executing raw SQL.
+7. Users can review cluster-wide incidents from `/api/clusters/{clusterId}/incidents`, continue legacy safe queries through `/api/clusters/{clusterId}/ai/query`, and use the newer conversation-based investigation assistant through:
+   - `POST /api/clusters/{clusterId}/ai/chat`
+   - `GET /api/clusters/{clusterId}/ai/conversations`
+   - `GET /api/clusters/{clusterId}/ai/conversations/{conversationId}`
+8. The conversation-based assistant uses a read-only tool-calling loop with server-executed tools for incidents, issues, snapshots, deployments, logs, approved documents, and a small curated ClusterSage knowledge base. It does not execute raw SQL, arbitrary shell commands, `kubectl`, or Kubernetes mutations.
 8. The standalone email worker consumes cluster connection events and sends Azure Communication Services Email without blocking registration.
 9. When remediation is enabled end to end, the backend can queue approved rollout-restart actions and the agent can poll `/api/agent/actions/poll`, validate the action locally, patch the target Deployment, and report status back with `/api/agent/actions/{actionId}/status`.
 
@@ -53,7 +57,22 @@ ClusterSage uses the customer-installed connector model. The SaaS does not conne
 - The resource detail route remains `/dashboard/clusters/{clusterId}/resources/{kind}/{namespace}/{name}`.
 - That page still provides `Details`, `Logs`, `Incidents`, and `AI Suggestions` without changing the backend contracts.
 - The resource detail screen now visually aligns with the dark cluster-shell operations workspace and includes direct links back to cluster resources, cluster incidents, and ClusterSage AI.
-- The cluster-level ClusterSage AI screen remains `/dashboard/clusters/{clusterId}/ai` and still uses the same safe backend query flow, but now presents supported-query framing more clearly inside the cluster shell.
+- The cluster-level ClusterSage AI screen remains `/dashboard/clusters/{clusterId}/ai`.
+- It now presents a conversation-based investigation workspace with history, evidence chips, confidence/freshness indicators, retry handling, and a new-conversation action.
+- The older fixed-question flow is no longer the primary frontend experience, but the legacy backend query endpoint still remains available for backward compatibility.
+
+## Cluster Investigation Agent
+
+- Backend agent architecture now separates:
+  - orchestration under `app/ai/agent`
+  - tool definitions and execution under `app/ai/tools`
+  - curated static knowledge under `app/ai/knowledge_base`
+- Conversation persistence now uses:
+  - `ai_conversations`
+  - `ai_messages`
+- Tool execution is server-scoped by organization, user, cluster, and conversation context.
+- Conversation context is bounded to recent messages only; it does not resend full prior tool payloads or persist hidden reasoning.
+- Retrieved logs, documents, and knowledge-base excerpts are treated as untrusted evidence and redacted before being sent back into the model loop.
 
 ## Tenancy
 

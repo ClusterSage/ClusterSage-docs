@@ -20,6 +20,10 @@ Use `Authorization: Bearer <jwt>`.
 - `GET /api/clusters/{clusterId}`: cluster details.
 - `DELETE /api/clusters/{clusterId}`: permanently remove a connected cluster and delete its associated database records for that cluster.
 - `GET /api/clusters/{clusterId}/logs`: log batch indexes.
+- `POST /api/clusters/{clusterId}/ai/chat`: send a cluster-scoped investigation message and receive a grounded assistant response.
+- `GET /api/clusters/{clusterId}/ai/conversations`: list bounded conversation history for the current user and selected cluster.
+- `GET /api/clusters/{clusterId}/ai/conversations/{conversationId}`: retrieve one conversation plus stored messages.
+- `POST /api/clusters/{clusterId}/ai/query`: legacy rule-based cluster query endpoint kept for backward compatibility.
 - `GET /api/clusters/{clusterId}/resources`: tenant-scoped resources from the latest cluster snapshot.
 - `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}`: selected resource details.
 - `GET /api/clusters/{clusterId}/resources/{kind}/{namespace}/{name}/logs`: selected pod log lines from recent log batches.
@@ -44,6 +48,8 @@ Current note:
 - Automatic alert evaluation exists behind `ALERT_EVALUATION_ENABLED`.
 - Alert-threshold emails are queued through Service Bus and sent by the email worker.
 - `GET /api/clusters/{clusterId}/alert-events` returns stored breach rows; `notification_sent` currently reflects successful queue dispatch.
+- The new conversation-based AI assistant is controlled separately by `AI_AGENT_ENABLED`.
+- The assistant is read-only and uses bounded server-executed tools; it does not execute raw SQL, arbitrary shell commands, `kubectl`, or Kubernetes mutations.
 
 ## Agent Endpoints
 

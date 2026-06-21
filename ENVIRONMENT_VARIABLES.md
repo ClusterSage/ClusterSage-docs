@@ -47,6 +47,7 @@ These values are environment-specific. The examples below use production values 
 | `AZURE_CLIENT_ID` | hosted backend | no | `<managed-identity-client-id>` | workload identity / managed identity, typically the same client ID used in the service account annotation |
 | `AI_ANALYSIS_ENABLED` | AI phase | no | `false` | feature flag |
 | `AI_CLUSTER_QUERY_ENABLED` | AI phase | no | `false` | feature flag |
+| `AI_AGENT_ENABLED` | AI agent phase | no | `false` | enables the conversation-based cluster investigation assistant |
 | `ALERT_EVALUATION_ENABLED` | alerting phase | no | `false` | enables backend alert evaluation loop |
 | `ALERT_EVALUATION_INTERVAL_SECONDS` | alerting phase | no | `60` | background alert evaluation interval |
 | `REMEDIATION_APPROVAL_ENABLED` | remediation phase | no | `true` | feature flag |
@@ -55,6 +56,20 @@ These values are environment-specific. The examples below use production values 
 | `AI_MAX_TOKENS` | AI phase | no | `1200` | prompt guardrail |
 | `AI_TEMPERATURE` | AI phase | no | `0` | deterministic AI setting |
 | `AI_PROMPT_VERSION` | AI phase | no | `v1` | prompt version tracking |
+| `AI_AGENT_MAX_TOOL_CALLS` | AI agent phase | no | `6` | maximum server-executed tool calls per chat request |
+| `AI_AGENT_MAX_ITERATIONS` | AI agent phase | no | `4` | maximum model/tool loop iterations per request |
+| `AI_AGENT_MAX_CONTEXT_TOKENS` | AI agent phase | no | `12000` | bounded conversation context budget |
+| `AI_AGENT_MAX_HISTORY_MESSAGES` | AI agent phase | no | `8` | recent conversation messages sent to the model |
+| `AI_AGENT_TOOL_TIMEOUT_SECONDS` | AI agent phase | no | `8` | per-tool timeout |
+| `AI_AGENT_REQUEST_TIMEOUT_SECONDS` | AI agent phase | no | `45` | overall model request timeout |
+| `AI_AGENT_MAX_DB_ROWS` | AI agent phase | no | `50` | maximum rows returned by a database-backed tool |
+| `AI_AGENT_MAX_LOG_MATCHES` | AI agent phase | no | `20` | bounded returned log matches |
+| `AI_AGENT_MAX_BLOB_BYTES` | AI agent phase | no | `1048576` | maximum bytes read from an approved document blob |
+| `AI_AGENT_MAX_BLOB_BATCHES` | AI agent phase | no | `8` | maximum log/blob batches scanned in one request |
+| `AI_AGENT_MAX_DOCUMENT_CHARACTERS` | AI agent phase | no | `4000` | maximum excerpt size returned from one document |
+| `AI_AGENT_KNOWLEDGE_BASE_MAX_RESULTS` | AI agent phase | no | `5` | maximum curated knowledge-base sections returned |
+| `AI_AGENT_LOG_MAX_TIME_RANGE_HOURS` | AI agent phase | no | `24` | maximum log search lookback window |
+| `AI_AGENT_PROMPT_VERSION` | AI agent phase | no | `cluster-investigator-v1` | prompt/version tag for conversation responses |
 
 ## Frontend
 
