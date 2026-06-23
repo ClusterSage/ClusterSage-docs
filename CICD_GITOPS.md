@@ -72,8 +72,8 @@ Runs:
 - `npm run typecheck --if-present`
 - `npm run test --if-present`
 - `npm run build`
-- SonarQube scan
-- Snyk dependency scan
+- SonarQube Cloud scan for organization `clustersage` (non-blocking)
+- Snyk dependency scan (non-blocking)
 
 ### Services
 
@@ -89,8 +89,8 @@ Runs:
 - `python -m compileall app`
 - `pytest` where tests exist
 - Docker build validation for each service
-- SonarQube scan
-- Snyk dependency scan
+- SonarQube Cloud scan for organization `clustersage` (non-blocking)
+- Snyk dependency scan (non-blocking)
 - image publish workflows also run a Trivy image scan after push; that step is non-blocking and workflow execution continues even if the scan step reports vulnerabilities or the scan action itself fails
 
 ## Dev Deployment Flow
@@ -289,6 +289,11 @@ For prod, rollback should restore a previous known-good version tag and digest p
 - `SONAR_TOKEN`
 - `SONAR_HOST_URL`
 - `SNYK_TOKEN`
+
+SonarQube Cloud configuration:
+
+- organization key: `clustersage`
+- the workflows pass `-Dsonar.organization=clustersage` directly in the scan step arguments
 
 ## Required Azure Permissions
 
